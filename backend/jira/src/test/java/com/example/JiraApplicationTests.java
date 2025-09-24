@@ -1,10 +1,10 @@
-package com.jira.jira_backend;
+package com.example;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JiraBackendApplicationTests {
+class JiraApplicationTests {
 
 	@Test
 	void contextLoads() {
