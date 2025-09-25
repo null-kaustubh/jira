@@ -4,57 +4,88 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "jira_task_comments")
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User user_id;
 
-    @Column(name = "COMMENT", nullable = false)
+    @Column(name = "comment", nullable = false)
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "TASK_ID")
-    private Task task;
+    @JoinColumn(name = "task_id")
+    private Task task_id;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Comment() {}
+    public Comment() {
+    }
 
     public Comment(Long id, User user, String comment, Task task, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.user = user;
+        this.user_id = user;
         this.comment = comment;
-        this.task = task;
+        this.task_id = task;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getComment() { return comment; }
-    public void setComment(String comment) { this.comment = comment; }
+    public User getUser() {
+        return user_id;
+    }
 
-    public Task getTask() { return task; }
-    public void setTask(Task task) { this.task = task; }
+    public void setUser(User user) {
+        this.user_id = user;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getComment() {
+        return comment;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Task getTask() {
+        return task_id;
+    }
+
+    public void setTask(Task task) {
+        this.task_id = task;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

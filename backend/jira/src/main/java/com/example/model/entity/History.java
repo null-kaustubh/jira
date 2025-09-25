@@ -4,49 +4,75 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "HISTORY")
+@Table(name = "jira_task_history")
 public class History {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "TASK_ID")
+    @JoinColumn(name = "task_id")
     private Task task;
 
-    @Column(name = "FROM_STATUS")
+    @Column(name = "from_status")
     private String fromStatus;
 
-    @Column(name = "TO_STATUS")
+    @Column(name = "to_status")
     private String toStatus;
 
-    @Column(name = "PERFORMED_AT")
-    private LocalDateTime performedAt;
+    @Column(name = "submitted_at")
+    private LocalDateTime submittedAt;
 
-    public History() {}
+    public History() {
+    }
 
-    public History(Long id, Task task, String fromStatus, String toStatus, LocalDateTime performedAt) {
+    public History(Long id, Task task, String fromStatus, String toStatus, LocalDateTime submittedAt) {
         this.id = id;
         this.task = task;
         this.fromStatus = fromStatus;
         this.toStatus = toStatus;
-        this.performedAt = performedAt;
+        this.submittedAt = submittedAt;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Task getTask() { return task; }
-    public void setTask(Task task) { this.task = task; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getFromStatus() { return fromStatus; }
-    public void setFromStatus(String fromStatus) { this.fromStatus = fromStatus; }
+    public Task getTask() {
+        return task;
+    }
 
-    public String getToStatus() { return toStatus; }
-    public void setToStatus(String toStatus) { this.toStatus = toStatus; }
+    public void setTask(Task task) {
+        this.task = task;
+    }
 
-    public LocalDateTime getPerformedAt() { return performedAt; }
-    public void setPerformedAt(LocalDateTime performedAt) { this.performedAt = performedAt; }
+    public String getFromStatus() {
+        return fromStatus;
+    }
+
+    public void setFromStatus(String fromStatus) {
+        this.fromStatus = fromStatus;
+    }
+
+    public String getToStatus() {
+        return toStatus;
+    }
+
+    public void setToStatus(String toStatus) {
+        this.toStatus = toStatus;
+    }
+
+    public LocalDateTime getPerformedAt() {
+        return submittedAt;
+    }
+
+    public void setPerformedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
+    }
 }
