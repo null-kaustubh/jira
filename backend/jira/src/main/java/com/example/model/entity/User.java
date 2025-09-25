@@ -13,7 +13,7 @@ public class User {
     @Column(name = "user_id")
     private Long user_id;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @NotBlank
