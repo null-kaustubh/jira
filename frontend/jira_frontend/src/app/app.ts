@@ -4,9 +4,13 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  template: `
+    <h1>Welcome to {{ title() }}!</h1>
+
+    <router-outlet />
+  `,
+  styles: [],
 })
 export class App {
-  protected readonly title = signal('jiraFrontend');
+  protected readonly title = signal('jira_frontend');
 }
