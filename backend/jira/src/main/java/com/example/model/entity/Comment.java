@@ -16,7 +16,7 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User user_id;
 
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment_desc", nullable = false)
     private String comment;
 
     @ManyToOne
