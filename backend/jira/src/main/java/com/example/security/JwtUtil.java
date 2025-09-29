@@ -1,18 +1,19 @@
 package com.example.security;
 
-import java.security.Key;
 import java.util.Date;
-
+import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	
+	private static final String SECRET = "iplan-issue-tracker-jira-secret-key";
+	
+    private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    
     private final long expiration = 24 * 1000 * 60 * 60;
 
     public String generateToken(String email, String role) {

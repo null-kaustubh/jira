@@ -23,15 +23,21 @@ public class UserController {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
+    
+    @GetMapping("/test")
+    public String test() {
+        return "Hello";
+    }
+    
+    
+    
 
     // Register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             User registeredUser = userService.registerUser(user);
-
             String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole());
-
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User registered successfully", "token", token));
         } catch (Exception e) {
@@ -57,9 +63,10 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> profile(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
         try {
             String token = authHeader.substring(7); // remove "Bearer "
+            System.out.println(authHeader);
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.status(401).body(
                         java.util.Map.of("error", "Invalid or expired token"));
