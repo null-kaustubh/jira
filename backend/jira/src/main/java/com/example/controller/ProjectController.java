@@ -32,7 +32,7 @@ public class ProjectController {
 
 	@PostMapping
 	public ResponseEntity<Project> createProject(@RequestBody Project project,
-			@RequestHeader("Authorization") String authHeader) {
+			@RequestHeader("JWTAuthorization") String authHeader) {
 		try {
 			String token = authHeader.replace("Bearer ", "");
 			Project createdProject = projectService.createProject(project, token);

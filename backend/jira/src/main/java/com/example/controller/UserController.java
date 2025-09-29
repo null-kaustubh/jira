@@ -23,14 +23,6 @@ public class UserController {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
-    
-    @GetMapping("/test")
-    public String test() {
-        return "Hello";
-    }
-    
-    
-    
 
     // Register
     @PostMapping("/register")

@@ -57,7 +57,7 @@ class ProjectServiceImpl implements ProjectService {
 
         // Extract role
         String role = Jwts.parserBuilder()
-                          .setSigningKey( (byte[]) jwtUtil.getKey())
+                          .setSigningKey( jwtUtil.getKey())
                           .build()
                           .parseClaimsJws(token)
                           .getBody()

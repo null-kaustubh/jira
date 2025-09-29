@@ -45,7 +45,7 @@ public class JwtUtil {
         }
     }
 
-	public Object getKey() {
+	public SecretKey getKey() {
 		return key;
 	}
 }
