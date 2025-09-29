@@ -44,4 +44,8 @@ public class JwtUtil {
             return false;
         }
     }
+
+	public Object getKey() {
+		return key;
+	}
 }
