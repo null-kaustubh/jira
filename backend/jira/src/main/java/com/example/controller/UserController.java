@@ -23,14 +23,11 @@ public class UserController {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
-    
+
     @GetMapping("/test")
     public String test() {
         return "Hello";
     }
-    
-    
-    
 
     // Register
     @PostMapping("/register")
@@ -65,7 +62,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
         try {
-            String token = authHeader.substring(7); // remove "Bearer "
+            String token = authHeader.substring(7);
             System.out.println(authHeader);
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.status(401).body(

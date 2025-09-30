@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Style the dropdown menu */
+select option {
+  background-color: rgba(38, 38, 38, 0.95);
+  color: #e5e5e5;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+select option:hover {
+  background-color: rgba(56, 189, 248, 0.2);
+}
+
+select option:checked {
+  background-color: rgba(56, 189, 248, 0.3);
+  color: #0ea5e9;
+}
