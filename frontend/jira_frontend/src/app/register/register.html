@@ -1,1 +1,82 @@
-<p>register works!</p>
+<div class="w-full h-screen flex items-center justify-center">
+  <div
+    class="lg:border lg:border-neutral-800 bg-neutral-900 w-full h-screen 2xl:w-[1440px] 2xl:h-[800px] 2xl:rounded-[20px]"
+  >
+    <div class="w-full h-full grid lg:grid-cols-2 grid-cols-1">
+      <!-- Left Section -->
+      <div
+        *ngIf="emailForm; else socialLogin"
+        class="flex flex-col mt-20 lg:mt-21 mb-16 mx-6 sm:mx-12 lg:mx-18 items-center justify-between"
+      >
+        <div class="flex flex-col gap-4 items-start">
+          <button
+            (click)="emailForm = false"
+            class="flex items-center justify-center cursor-pointer gap-1 hover:bg-sky-500 transition-all px-3.5 py-1 rounded-lg text-neutral-500 hover:text-neutral-100 font-inter text-sm"
+          >
+            ← Back
+          </button>
+
+          <div>
+            <h1 class="text-3xl font-semibold text-neutral-200 tracking-tight mb-3">
+              Create your <span class="text-sky-500">iTask</span> account
+            </h1>
+            <p class="font-inter font-medium text-sky-500">Join the new way to track your team.</p>
+          </div>
+
+          <!-- Email Form -->
+          <app-signup-form class="flex-grow w-full"></app-signup-form>
+        </div>
+
+        <div class="text-sm">
+          <p class="font-inter text-neutral-500">
+            Already have an account?
+            <span class="text-sky-500 underline cursor-pointer" (click)="goToSignIn()">
+              Sign in
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Social Login Section -->
+      <ng-template #socialLogin>
+        <div
+          class="flex flex-col mt-20 lg:mt-32 mb-16 mx-6 sm:mx-12 lg:mx-18 items-center justify-between"
+        >
+          <div>
+            <h1 class="text-3xl font-semibold text-neutral-200 tracking-tight mb-3">
+              Create your <span class="text-sky-500">iTask</span> account
+            </h1>
+            <p class="font-inter font-medium text-sky-500">Join the new way to track your team.</p>
+
+            <div
+              class="flex flex-col items-center justify-center gap-2 font-inter font-medium my-20"
+            >
+              <button
+                (click)="emailForm = true"
+                class="bg-sky-500 w-full py-1.5 rounded-md text-sm border border-sky-600 cursor-pointer text-neutral-100 hover:bg-sky-600 transition-colors"
+              >
+                Continue with email
+              </button>
+            </div>
+          </div>
+
+          <div class="text-sm">
+            <p class="font-inter text-neutral-500">
+              Already have an account?
+              <span class="text-sky-500 underline cursor-pointer" (click)="goToSignIn()">
+                Sign in
+              </span>
+            </p>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Right Panel -->
+      <div class="w-full h-full flex items-center justify-center">
+        <div
+          class="bg-neutral-800 w-full max-w-[900px] h-[750px] lg:rounded-l-2xl p-6 flex flex-col gap-6 overflow-hidden"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+<form
+  class="flex flex-col items-start justify-center gap-2 w-full min-w-full"
+  (ngSubmit)="submitForm()"
+>
+  <!-- Username -->
+  <label class="text-sm font-medium text-neutral-200">Username</label>
+  <input
+    type="text"
+    placeholder="JohnDoe"
+    [(ngModel)]="username"
+    name="username"
+    required
+    class="mb-2 w-full bg-neutral-800 px-3 py-2 text-sm font-light placeholder:text-neutral-400 rounded-lg border border-neutral-500"
+  />
+
+  <!-- Email -->
+  <label class="text-sm font-medium text-neutral-200">Email</label>
+  <input
+    type="email"
+    placeholder="Johndoe@xyz.com"
+    [(ngModel)]="email"
+    name="email"
+    required
+    class="mb-2 w-full bg-neutral-800 px-3 py-2 text-sm font-light placeholder:text-neutral-400 rounded-lg border border-neutral-500"
+  />
+
+  <!-- Password -->
+  <label class="text-sm font-medium text-neutral-200">Password</label>
+  <div class="relative w-full">
+    <input
+      type="{{ showPass ? 'text' : 'password' }}"
+      placeholder="Password"
+      [(ngModel)]="password"
+      (input)="handlePasswordChange(password)"
+      name="password"
+      required
+      class="w-full bg-neutral-800 px-3 py-2 text-sm font-light rounded-lg border placeholder:text-neutral-400 border-neutral-500 pr-10"
+    />
+    <button
+      type="button"
+      (click)="toggleShowPass()"
+      class="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-100 cursor-pointer"
+    >
+      <lucide-icon *ngIf="showPass" [img]="Eye" size="18"></lucide-icon>
+      <lucide-icon *ngIf="!showPass" [img]="EyeOff" size="18"></lucide-icon>
+    </button>
+  </div>
+
+  <ul class="font-inter text-sm mt-2">
+    <li
+      [class.text-green-500]="validations.hasMixedCase"
+      [class.text-neutral-400]="!validations.hasMixedCase"
+      class="flex items-center gap-1"
+    >
+      {{ validations.hasMixedCase ? '◉' : '○' }}
+      Mix of uppercase & lowercase letters
+    </li>
+    <li
+      [class.text-green-500]="validations.hasDigit"
+      [class.text-neutral-400]="!validations.hasDigit"
+      class="flex items-center gap-1"
+    >
+      {{ validations.hasDigit ? '◉' : '○' }}
+      Contain at least 1 number
+    </li>
+    <li
+      [class.text-green-500]="validations.hasSymbol"
+      [class.text-neutral-400]="!validations.hasSymbol"
+      class="flex items-center gap-1"
+    >
+      {{ validations.hasSymbol ? '◉' : '○' }}
+      Contain at least 1 special character
+    </li>
+    <li
+      [class.text-green-500]="validations.isMinLength"
+      [class.text-neutral-400]="!validations.isMinLength"
+      class="flex items-center gap-1"
+    >
+      {{ validations.isMinLength ? '◉' : '○' }}
+      Minimum 8 characters long
+    </li>
+  </ul>
+
+  <!-- Role -->
+  <z-dropdown>
+    <button
+      z-button
+      zType="outline"
+      class="bg-neutral-800 mt-2"
+      [ngClass]="
+        role
+          ? 'bg-sky-500 text-black hover:bg-sky-600 hover:text-black'
+          : 'bg-neutral-800 text-white'
+      "
+      z-dropdown
+      [zDropdownMenu]="menu"
+    >
+      {{ role || 'Select Role' }}
+    </button>
+    <z-dropdown-menu-content #menu="zDropdownMenuContent" class="w-56">
+      <z-dropdown-menu-label>Role</z-dropdown-menu-label>
+
+      <z-dropdown-menu-item (click)="setRole('')">None</z-dropdown-menu-item>
+      <z-dropdown-menu-item (click)="setRole('User')">User</z-dropdown-menu-item>
+      <z-dropdown-menu-item (click)="setRole('Manager')">Manager</z-dropdown-menu-item>
+      <z-dropdown-menu-item (click)="setRole('Admin')">Admin</z-dropdown-menu-item>
+    </z-dropdown-menu-content>
+  </z-dropdown>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    [disabled]="!isValid"
+    class="bg-sky-500 font-medium mt-6 text-black w-full py-2 rounded-md text-sm cursor-pointer hover:bg-sky-600 transition-all disabled:bg-sky-500/50 disabled:cursor-not-allowed"
+  >
+    Sign Up
+  </button>
+</form>
