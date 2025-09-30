@@ -14,13 +14,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // Disable CSRF for REST APIs tested in Postman
+            .csrf().disable()
             .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/register").permitAll() // Allow registration
-                .requestMatchers("/test").authenticated() // Require auth for /test
-                .anyRequest().authenticated() // Protect all other endpoints
+                .anyRequest().authenticated() 
             .and()
-            .httpBasic(); // Use Basic Auth (username/password)
+            .httpBasic(); 
 
         return http.build();
     }

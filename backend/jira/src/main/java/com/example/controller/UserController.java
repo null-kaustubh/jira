@@ -24,11 +24,6 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Hello";
-    }
-
     // Register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -52,7 +47,7 @@ public class UserController {
             String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
 
             return ResponseEntity.ok().body(
-                    java.util.Map.of("message", "User registered successfully", "token", token));
+                    java.util.Map.of("message", "User logged in successfully", "token", token));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(
                     java.util.Map.of("error", e.getMessage()));

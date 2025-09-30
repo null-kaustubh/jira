@@ -27,6 +27,9 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private User manager;
+    
+    @Column(name="status")
+    private String status;
 
     public Project() {
     }
@@ -87,4 +90,13 @@ public class Project {
     public void setManager(User manager) {
         this.manager = manager;
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+    
 }
