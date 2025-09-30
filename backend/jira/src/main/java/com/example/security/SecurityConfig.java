@@ -16,7 +16,6 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/register").permitAll()
                 .anyRequest().authenticated() 
             .and()
             .httpBasic(); 
