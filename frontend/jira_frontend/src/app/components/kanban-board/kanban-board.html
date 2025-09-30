@@ -1,0 +1,28 @@
+<div class="flex w-full mx-auto gap-4 mt-4">
+  @for (status of taskStatus; track $index) {
+  <div
+    class="relative bg-neutral-200 w-full rounded-md p-4 flex-1 transition-colors duration-300"
+    (drop)="onDrop($event, status)"
+    (dragover)="$event.preventDefault()"
+  >
+    <h3 class="font-bold mb-4 text-neutral-600">{{ status }}</h3>
+    <div>
+      @for (task of getTasksByStatus(status); track task.id) {
+      <div
+        class="flex items-end justify-between px-2 py-1 bg-neutral-50 rounded-md my-4"
+        draggable="true"
+        (dragstart)="onDragStart($event, task)"
+        (dragend)="onDragEnd($event)"
+      >
+        <div class="flex flex-col gap-2">
+          <h4>{{ task.title }}</h4>
+          <p>{{ task.description }}</p>
+          <p>{{ task.id }}</p>
+        </div>
+        <p>{{ task.assignee }}</p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>
