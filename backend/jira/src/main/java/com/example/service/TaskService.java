@@ -1,20 +1,25 @@
 package com.example.service;
 
+import com.example.model.entity.Project;
 import com.example.model.entity.Task;
+import com.example.model.entity.User;
 import java.util.List;
+import com.example.repository.ProjectRepository;
 import com.example.repository.TaskRepository;
+import com.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public interface TaskService {
-    Task createTask(Task task);
+    Task createTask(Long projectId, Task task);
     Task getTaskById(Long id);
     List<Task> getTasksByProjectId(Long projectId);
     List<Task> getAllTasks();
     Task updateTask(Long id, Task updatedTask);
     void deleteTask(Long id);
+    Task save(Task task);
+	List<Task> getTasksByProjectIdAndAssigneeEmail(Long projectId, String email);
 }
 
 
@@ -23,24 +28,45 @@ public interface TaskService {
 @Service
 class TaskServiceImpl implements TaskService {
 
+	private ProjectRepository projectRepository;
+	private UserRepository userRepository;
+	
     private final TaskRepository taskRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Long projectId, Task task) {
         if (task.getTitle() == null || task.getTitle().isEmpty()) {
             throw new IllegalArgumentException("Task title is required");
         }
+        
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+        task.setProject(project);
+
+        User assignee = userRepository.findById(task.getAssignee().getUser_id())
+                .orElseThrow(() -> new RuntimeException("Assignee not found with id: " + task.getAssignee().getUser_id()));
+        task.setAssignee(assignee);
+        
         if (task.getProject() == null) {
             throw new IllegalArgumentException("Project is required for the task");
         }
+        
         task.setCreatedAt(LocalDateTime.now());
+        
         if (task.getStatus() == null) {
-            task.setStatus("TO_DO"); // Default status, assuming Jira-like workflow
+            task.setStatus("TO_DO");
         }
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task save(Task task) {
         return taskRepository.save(task);
     }
 
@@ -52,7 +78,7 @@ class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTasksByProjectId(Long projectId) {
-        return taskRepository.findByProjectProjectId(projectId);
+        return taskRepository.findByProject_ProjectId(projectId);
     }
 
     @Override
@@ -97,4 +123,9 @@ class TaskServiceImpl implements TaskService {
         }
         taskRepository.deleteById(id);
     }
+
+	@Override
+	public List<Task> getTasksByProjectIdAndAssigneeEmail(Long projectId, String email) {
+		return taskRepository.findByProject_ProjectIdAndAssignee_Email(projectId, email);
+	}
 }
