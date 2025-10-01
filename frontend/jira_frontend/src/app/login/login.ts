@@ -8,20 +8,15 @@ import { Eye, EyeOff, LucideAngularModule } from 'lucide-angular';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule,
-    FormsModule,
-    LucideAngularModule,
-    ZardDropdownModule,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, FormsModule, LucideAngularModule, ZardDropdownModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
- 
   email = '';
   password = '';
-  showPass=true;
+  showPass = true;
 
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
@@ -38,5 +33,9 @@ export class Login {
 
   toggleShowPass() {
     this.showPass = !this.showPass;
+  }
+
+  get isValid(): boolean {
+    return this.email.trim().length > 0 && this.password.trim().length > 0;
   }
 }

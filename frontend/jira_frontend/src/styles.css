@@ -83,6 +83,9 @@
   --color-amber-300: #F0E2E7; 
   --color-neutral-100: #FBFBFF;
   --color-blue-800: #0B4F6C;
+  --color-zinc-800: #242528;
+  --color-zinc-500: #7E8188;
+  --color-zinc-900: #18191A;
 }
  
 @layer base {

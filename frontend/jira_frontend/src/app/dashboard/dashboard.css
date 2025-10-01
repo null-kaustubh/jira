@@ -1,0 +1,7 @@
+aside {
+  transition: width 0.3s ease;
+}
+
+input {
+  transition: all 0.2s ease-in-out;
+}
