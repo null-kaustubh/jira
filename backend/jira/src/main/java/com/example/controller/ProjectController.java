@@ -1,57 +1,75 @@
 package com.example.controller;
 
 import com.example.model.entity.Project;
-import com.example.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.service.ProjectService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//////
+
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/api/projects")
 public class ProjectController {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectService projectService;
 
-    
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
     @GetMapping
     public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+        return projectService.getAllProjects();
     }
 
-    
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        Optional<Project> project = projectRepository.findById(id);
-        return project.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+        return projectService.getProjectById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    
-    @PostMapping
-    public Project createProject(@RequestBody Project project) {
-        return projectRepository.save(project);
-    }
+	@PostMapping
+	public ResponseEntity<Project> createProject(@RequestBody Project project,
+			@RequestHeader("JWTAuthorization") String authHeader) {
+		try {
+			String token = authHeader.replace("Bearer ", "");
+			Project createdProject = projectService.createProject(project, token);
+			return ResponseEntity.ok(createdProject);
+		} catch (SecurityException e) {
+			return ResponseEntity.status(403).body(null);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(null);
+		}
+	}
 
- 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project projectDetails) {
-        return projectRepository.findById(id).map(project -> {
-            project.setName(projectDetails.getName()); // assuming Project has a "name"
-            project.setDescription(projectDetails.getDescription()); // assuming Project has a "description"
-            Project updated = projectRepository.save(project);
-            return ResponseEntity.ok(updated);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
+        return projectService.updateProject(id, updatedProject)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        return projectRepository.findById(id).map(project -> {
-            projectRepository.delete(project);
+        boolean deleted = projectService.deleteProject(id);
+        if (deleted) {
             return ResponseEntity.noContent().build();
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // ✅ New endpoint to get project status
+    @GetMapping("/{id}/status")
+    public ResponseEntity<String> getProjectStatus(@PathVariable Long id) {
+        String status = projectService.getProjectStatus(id);
+        if (status != null) {
+            return ResponseEntity.ok(status);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
