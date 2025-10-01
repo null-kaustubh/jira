@@ -82,7 +82,12 @@
   </ul>
 
   <!-- Role -->
-  <z-select zPlaceholder="Select Role" class="bg-neutral-800 rounded-md" [(ngModel)]="defaultValue">
+  <z-select
+    zPlaceholder="Select Role"
+    class="bg-neutral-800 rounded-md"
+    [(ngModel)]="role"
+    name="role"
+  >
     <z-select-item zValue="user">User</z-select-item>
     <z-select-item zValue="manager">Manager</z-select-item>
     <z-select-item zValue="admin">Admin</z-select-item>
