@@ -3,8 +3,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
-import { ZardDropdownModule } from '@shared/components/dropdown/dropdown.module';
-import { ZardButtonComponent } from '@shared/components/button/button.component';
+import { ZardSelectComponent } from '@shared/components/select/select.component';
+import { ZardSelectItemComponent } from '@shared/components/select/select-item.component';
 
 @Component({
   selector: 'app-signup-form',
@@ -13,8 +13,8 @@ import { ZardButtonComponent } from '@shared/components/button/button.component'
     CommonModule,
     FormsModule,
     LucideAngularModule,
-    ZardDropdownModule,
-    ZardButtonComponent,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './signup-form.html',
@@ -28,6 +28,7 @@ export class SignupForm {
   password = '';
   username = '';
   role = '';
+  defaultValue = 'user';
   showPass = false;
 
   validations = {
