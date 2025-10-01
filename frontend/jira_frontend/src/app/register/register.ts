@@ -13,17 +13,10 @@ import { SignupForm } from '../components/signup-form/signup-form';
 })
 export class Register {
   emailForm = false;
-  email = '';
-  password = '';
 
   constructor(private router: Router) {}
 
   goToSignIn() {
     this.router.navigate(['/login']);
-  }
-
-  submitEmailForm() {
-    console.log('Email: ', this.email);
-    console.log('Password: ', this.password);
   }
 }

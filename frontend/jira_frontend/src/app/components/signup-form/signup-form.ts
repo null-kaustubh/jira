@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 import { ZardSelectComponent } from '@shared/components/select/select.component';
 import { ZardSelectItemComponent } from '@shared/components/select/select-item.component';
+import { User } from 'src/app/services/AuthService/authInterface';
+import { Auth } from 'src/app/services/AuthService/auth';
 
 @Component({
   selector: 'app-signup-form',
@@ -20,15 +22,14 @@ import { ZardSelectItemComponent } from '@shared/components/select/select-item.c
   templateUrl: './signup-form.html',
   styleUrl: './signup-form.css',
 })
-export class SignupForm {
+export class SignupForm implements OnInit {
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
 
   email = '';
   password = '';
   username = '';
-  role = '';
-  defaultValue = 'user';
+  role = 'user';
   showPass = false;
 
   validations = {
@@ -38,7 +39,9 @@ export class SignupForm {
     isMinLength: false,
   };
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: Auth) {}
+
+  ngOnInit(): void {}
 
   handlePasswordChange(value: string) {
     this.password = value;
@@ -63,14 +66,27 @@ export class SignupForm {
 
   submitForm() {
     if (!this.isValid) return;
+    try {
+      const newUser: User = {
+        email: this.email,
+        password: this.password,
+        username: this.username,
+        role: this.role,
+      };
 
-    console.log('Email:', this.email);
-    console.log('Password:', this.password);
-    console.log('Username: ', this.username);
-    console.log('Role: ', this.role);
-
-    // Later: connect to backend for signup
-    this.router.navigate(['/home']);
+      this.userService.registerUser(newUser).subscribe({
+        next: (response: any) => {
+          const token = response.token;
+          if (token) {
+            localStorage.setItem('jwtToken', token);
+          }
+          this.router.navigate(['/home']);
+        },
+        error: (err) => console.error(err),
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   toggleShowPass() {
