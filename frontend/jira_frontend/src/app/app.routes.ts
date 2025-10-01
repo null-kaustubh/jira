@@ -19,7 +19,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => {
-          return import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard);
+          return import('./dashboard/dashboard').then((m) => m.Dashboard);
         },
       },
     ],
