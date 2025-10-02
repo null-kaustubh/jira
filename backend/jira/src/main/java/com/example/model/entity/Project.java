@@ -10,7 +10,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
-    private Long project_id;
+    private Long projectId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -27,12 +27,15 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private User manager;
+    
+    @Column(name="status")
+    private String status;
 
     public Project() {
     }
 
     public Project(Long id, String name, String description, LocalDateTime createdAt, String createdBy, User manager) {
-        this.project_id = id;
+        this.projectId = id;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
@@ -40,15 +43,15 @@ public class Project {
         this.manager = manager;
     }
 
-    public Long getId() {
-        return project_id;
-    }
+    public Long getProjectId() {
+		return projectId;
+	}
 
-    public void setId(Long id) {
-        this.project_id = id;
-    }
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
 
-    public String getName() {
+	public String getName() {
         return name;
     }
 
@@ -87,4 +90,13 @@ public class Project {
     public void setManager(User manager) {
         this.manager = manager;
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+    
 }

@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.example.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -23,14 +25,6 @@ public class UserController {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
-    
-    @GetMapping("/test")
-    public String test() {
-        return "Hello";
-    }
-    
-    
-    
 
     // Register
     @PostMapping("/register")
@@ -55,7 +49,7 @@ public class UserController {
             String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
 
             return ResponseEntity.ok().body(
-                    java.util.Map.of("message", "User registered successfully", "token", token));
+                    java.util.Map.of("message", "User logged in successfully", "token", token));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(
                     java.util.Map.of("error", e.getMessage()));
@@ -65,7 +59,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
         try {
-            String token = authHeader.substring(7); // remove "Bearer "
+            String token = authHeader.substring(7);
             System.out.println(authHeader);
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.status(401).body(

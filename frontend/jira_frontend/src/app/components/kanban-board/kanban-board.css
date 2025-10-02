@@ -1,0 +1,7 @@
+.dragging {
+  opacity: 0.5;
+}
+
+.relative [data-droptarget] {
+  border: 2px dashed rgba(255,255,255,0.06);
+}

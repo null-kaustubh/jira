@@ -13,4 +13,15 @@ export const routes: Routes = [
       return import('./register/register').then((m) => m.Register);
     },
   },
+  {
+    path: 'projects',
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => {
+          return import('./dashboard/dashboard').then((m) => m.Dashboard);
+        },
+      },
+    ],
+  },
 ];

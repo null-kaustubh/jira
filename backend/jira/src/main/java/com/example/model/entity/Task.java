@@ -11,11 +11,11 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
-    private Long task_id;
+    private Long taskId;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    private Project project_id;
+    private Project project;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -47,8 +47,8 @@ public class Task {
 
     public Task(Long id, Project project, String title, String description, String type, String priority, String status,
             LocalDateTime createdAt, User assignee, LocalDate dueDate) {
-        this.task_id = id;
-        this.project_id = project;
+        this.taskId = id;
+        this.project = project;
         this.title = title;
         this.description = description;
         this.type = type;
@@ -60,19 +60,19 @@ public class Task {
     }
 
     public Long getId() {
-        return task_id;
+        return taskId;
     }
 
     public void setId(Long id) {
-        this.task_id = id;
+        this.taskId = id;
     }
 
     public Project getProject() {
-        return project_id;
+        return project;
     }
 
     public void setProject(Project project) {
-        this.project_id = project;
+        this.project = project;
     }
 
     public String getTitle() {
