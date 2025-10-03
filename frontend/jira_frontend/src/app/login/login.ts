@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ZardDropdownModule } from '@shared/components/dropdown/dropdown.module';
 import { Eye, EyeOff, LucideAngularModule } from 'lucide-angular';
+import { UserService } from '../services/User/user-service';
 
 @Component({
   selector: 'app-login',
@@ -20,15 +21,22 @@ export class Login {
 
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService : UserService) {}
 
   goToSignUp() {
     this.router.navigate(['/register']);
   }
 
   submitForm() {
-    console.log('username: ', this.email);
-    console.log('Password: ', this.password);
+    this.userService.loginUser({ email : this.email, password : this.password}).subscribe({
+      next: (response) => {
+        localStorage.setItem("token", response.token);
+        this.router.navigate(['/projects/dashboard']);
+      },
+      error: (error) => {
+        console.error('Login failed:', error);
+      }
+    });
   }
 
   toggleShowPass() {
