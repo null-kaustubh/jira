@@ -3,8 +3,11 @@ package com.example.controller;
 import com.example.model.entity.Task;
 import com.example.security.JwtUtil;
 import com.example.service.TaskService;
+import com.example.service.TaskUtils;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Map;
@@ -13,13 +16,14 @@ import java.util.Map;
 @RequestMapping("/api/project/{projectId}/tasks")
 public class TaskController {
 
-	
+	private TaskUtils taskUtils;
     private final TaskService taskService;
     private final JwtUtil jwtUtil;
 
-    public TaskController(TaskService taskService, JwtUtil jwtUtil) {
+    public TaskController(TaskService taskService, JwtUtil jwtUtil, TaskUtils taskUtils) {
         this.taskService = taskService;
         this.jwtUtil = jwtUtil;
+        this.taskUtils = taskUtils;
     }
 
     private boolean isAuthenticated(String authHeader) {
@@ -108,12 +112,18 @@ public class TaskController {
             Task existingTask = taskService.getTaskById(id);
 
             if ("employee".equalsIgnoreCase(role)) {
+            	taskUtils.validateUpdatedTaskStatus(existingTask.getStatus() , updatedTask.getStatus());
+            	
                 existingTask.setDescription(updatedTask.getDescription());
                 existingTask.setType(updatedTask.getType());
-                existingTask.setStatus(updatedTask.getStatus());
+                
+                if (updatedTask.getStatus() != null && !updatedTask.getStatus().equals(existingTask.getStatus())) existingTask.setStatus(updatedTask.getStatus());
+                
                 Task savedTask = taskService.save(existingTask);
                 return ResponseEntity.ok(savedTask);
             } else {
+                taskUtils.isStepSkipAllowed( existingTask.getStatus() , updatedTask.getStatus() , true);
+
                 Task task = taskService.updateTask(id, updatedTask);
                 return ResponseEntity.ok(task);
             }
