@@ -1,9 +1,14 @@
 package com.example.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,6 +78,54 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body(
                     java.util.Map.of("error", "Invalid request"));
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+        @PathVariable Long id, @RequestBody User updates, @RequestHeader("JWTAuthorization") String authHeader
+    ) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+        }
+        try {
+            String token = authHeader.substring(7);
+            String requesterEmail = jwtUtil.extractEmail(token);
+            String requesterRole = jwtUtil.extractRole(token);
+
+            if (!"admin".equalsIgnoreCase(requesterRole) ) {
+                User target = userService.getUserById(id);
+                if (!target.getEmail().equalsIgnoreCase(requesterEmail)) return ResponseEntity.status(403).body(Map.of("error", "Not authorized to update other users"));
+
+                if (updates.getRole() != null) return ResponseEntity.status(403).body(java.util.Map.of("error", "Not authorized to change role"));
+                
+                if (updates.getEmail() != null && !updates.getEmail().equalsIgnoreCase(requesterEmail)) return ResponseEntity.status(403).body(java.util.Map.of("error", "Not authorized to update another user"));
+            }
+
+            User updated = userService.updateUser(id, updates);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(
+        @PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader
+    ) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+        }
+        try {
+            String token = authHeader.substring(7);
+            String role = jwtUtil.extractRole(token);
+
+            if (!"admin".equalsIgnoreCase(role) ) return ResponseEntity.status(403).body(java.util.Map.of("error", "Not authorized to delete user"));
+
+            userService.deleteUser(id);
+            return ResponseEntity.ok(java.util.Map.of("message", "User deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(java.util.Map.of("error", e.getMessage()));
         }
     }
 }
