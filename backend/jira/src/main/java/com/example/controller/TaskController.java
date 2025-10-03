@@ -26,20 +26,11 @@ public class TaskController {
         this.taskUtils = taskUtils;
     }
 
-    private boolean isAuthenticated(String authHeader) {
-        try {
-            String token = authHeader.substring(7);
-            return jwtUtil.validateToken(token);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     @GetMapping
     public ResponseEntity<?> getTasksByProjectId(
         @PathVariable Long projectId, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -64,7 +55,7 @@ public class TaskController {
         @PathVariable Long projectId, @RequestBody Task task, 
         @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -87,7 +78,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -102,7 +93,7 @@ public class TaskController {
     public ResponseEntity<?> updateTask(
             @PathVariable Long id, @RequestBody Task updatedTask, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         String token = authHeader.substring(7);
@@ -136,7 +127,7 @@ public class TaskController {
     public ResponseEntity<?> deleteTask(
             @PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         String token = authHeader.substring(7);
