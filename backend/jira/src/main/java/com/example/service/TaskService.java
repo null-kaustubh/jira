@@ -22,18 +22,14 @@ public interface TaskService {
 	List<Task> getTasksByProjectIdAndAssigneeEmail(Long projectId, String email);
 }
 
-
-
-
 @Service
 class TaskServiceImpl implements TaskService {
 
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
-	
     private final TaskRepository taskRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+	public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;

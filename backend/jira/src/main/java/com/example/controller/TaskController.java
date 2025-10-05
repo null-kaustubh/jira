@@ -3,8 +3,11 @@ package com.example.controller;
 import com.example.model.entity.Task;
 import com.example.security.JwtUtil;
 import com.example.service.TaskService;
+import com.example.service.TaskUtils;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Map;
@@ -13,29 +16,21 @@ import java.util.Map;
 @RequestMapping("/api/project/{projectId}/tasks")
 public class TaskController {
 
-	
+	private TaskUtils taskUtils;
     private final TaskService taskService;
     private final JwtUtil jwtUtil;
 
-    public TaskController(TaskService taskService, JwtUtil jwtUtil) {
+    public TaskController(TaskService taskService, JwtUtil jwtUtil, TaskUtils taskUtils) {
         this.taskService = taskService;
         this.jwtUtil = jwtUtil;
-    }
-
-    private boolean isAuthenticated(String authHeader) {
-        try {
-            String token = authHeader.substring(7);
-            return jwtUtil.validateToken(token);
-        } catch (Exception e) {
-            return false;
-        }
+        this.taskUtils = taskUtils;
     }
 
     @GetMapping
     public ResponseEntity<?> getTasksByProjectId(
         @PathVariable Long projectId, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -60,7 +55,7 @@ public class TaskController {
         @PathVariable Long projectId, @RequestBody Task task, 
         @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -83,7 +78,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         try {
@@ -98,7 +93,7 @@ public class TaskController {
     public ResponseEntity<?> updateTask(
             @PathVariable Long id, @RequestBody Task updatedTask, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         String token = authHeader.substring(7);
@@ -108,12 +103,18 @@ public class TaskController {
             Task existingTask = taskService.getTaskById(id);
 
             if ("employee".equalsIgnoreCase(role)) {
+            	taskUtils.validateUpdatedTaskStatus(existingTask.getStatus() , updatedTask.getStatus());
+            	
                 existingTask.setDescription(updatedTask.getDescription());
                 existingTask.setType(updatedTask.getType());
-                existingTask.setStatus(updatedTask.getStatus());
+                
+                if (updatedTask.getStatus() != null && !updatedTask.getStatus().equals(existingTask.getStatus())) existingTask.setStatus(updatedTask.getStatus());
+                
                 Task savedTask = taskService.save(existingTask);
                 return ResponseEntity.ok(savedTask);
             } else {
+                taskUtils.isStepSkipAllowed( existingTask.getStatus() , updatedTask.getStatus() , true);
+
                 Task task = taskService.updateTask(id, updatedTask);
                 return ResponseEntity.ok(task);
             }
@@ -126,7 +127,7 @@ public class TaskController {
     public ResponseEntity<?> deleteTask(
             @PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader
     ) {
-        if (!isAuthenticated(authHeader)) {
+        if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         String token = authHeader.substring(7);

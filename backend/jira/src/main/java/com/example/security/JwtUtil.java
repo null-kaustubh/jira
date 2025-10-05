@@ -44,6 +44,15 @@ public class JwtUtil {
                         .get("role");
     }
 
+    
+    public boolean isAuthenticated(String authHeader) {
+        try {
+            String token = authHeader.substring(7);
+            return validateToken(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public boolean validateToken(String token) {
         try {
