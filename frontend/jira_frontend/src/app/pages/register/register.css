@@ -1,0 +1,9 @@
+:host {
+    display: block;
+    width: 100%;
+  }
+  
+  select option {
+    background-color: #2d3748;
+    color: #e2e8f0;
+  }

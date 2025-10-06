@@ -4,13 +4,13 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => {
-      return import('./login/login').then((m) => m.Login);
+      return import('./pages/login/login').then((m) => m.Login);
     },
   },
   {
     path: 'register',
     loadComponent: () => {
-      return import('./register/register').then((m) => m.Register);
+      return import('./pages/register/register').then((m) => m.Register);
     },
   },
   {
