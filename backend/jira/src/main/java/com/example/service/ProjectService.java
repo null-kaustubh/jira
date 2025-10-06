@@ -24,7 +24,6 @@ public interface ProjectService {
 
     boolean deleteProject(Long id);
 
-    // ✅ New method to get project status
     String getProjectStatus(Long projectId);
 }
 
@@ -55,7 +54,6 @@ class ProjectServiceImpl implements ProjectService {
             throw new IllegalArgumentException("Project name is required");
         }
 
-        // Extract role
         String role = Jwts.parserBuilder()
                           .setSigningKey( jwtUtil.getKey())
                           .build()
@@ -63,7 +61,6 @@ class ProjectServiceImpl implements ProjectService {
                           .getBody()
                           .get("role", String.class);
 
-        // Check role
         if (!"MANAGER".equalsIgnoreCase(role) && !"ADMIN".equalsIgnoreCase(role)) {
             throw new SecurityException("Access denied: Only MANAGER or ADMIN can create projects");
         }
