@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,23 @@ public class UserController {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
     }
+    
+    @GetMapping
+    public ResponseEntity<?> getAllUsers(@RequestHeader("JWTAuthorization") String authHeader){
+    		try {
+    			String token = authHeader.substring(7);
+    			if (!jwtUtil.validateToken(token)) {
+                    return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+             }
+    			List<User> users = userService.findAllUsers();
+    			
+    			return ResponseEntity.ok().body(java.util.Map.of("users", users));
+    		} catch (Exception e) {
+    			return ResponseEntity.badRequest().body(
+    					java.util.Map.of("error", e.getMessage()));
+    		}
+    }
 
-    // Register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -45,7 +61,6 @@ public class UserController {
         }
     }
 
-    // Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -65,7 +80,6 @@ public class UserController {
     public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
-            System.out.println(authHeader);
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.status(401).body(
                         java.util.Map.of("error", "Invalid or expired token"));

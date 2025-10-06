@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ public interface UserService {
     void deleteUser(Long id);
 
 	User getUserById(Long id);
+	
+	List<User> findAllUsers();
 }
 
 @Service
@@ -82,5 +86,10 @@ class UserServiceImpl implements UserService {
 	public User getUserById(Long id) {
 		return userRepository.findById(id)
 	            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+	}
+
+	@Override
+	public List<User> findAllUsers() {
+		return userRepository.findAll();
 	}
 }
