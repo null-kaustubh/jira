@@ -1,15 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ZardDropdownModule } from '@shared/components/dropdown/dropdown.module';
-import { Eye, EyeOff, LucideAngularModule } from 'lucide-angular';
 import { UserService } from '../services/User/user-service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ZardDropdownModule],
+  imports: [CommonModule, FormsModule], // LucideAngularModule removed
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -17,25 +15,26 @@ import { UserService } from '../services/User/user-service';
 export class Login {
   email = '';
   password = '';
-  showPass = true;
+  showPass = false;
 
-  readonly Eye = Eye;
-  readonly EyeOff = EyeOff;
-  constructor(private router: Router, private userService : UserService) {}
+  constructor(private router: Router, private userService: UserService) {}
 
   goToSignUp() {
     this.router.navigate(['/register']);
   }
 
   submitForm() {
-    this.userService.loginUser({ email : this.email, password : this.password}).subscribe({
+    if (!this.isValid) return;
+
+    this.userService.loginUser({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        localStorage.setItem("token", response.token);
+        console.log('Login successful:', response);
+        localStorage.setItem('token', response.token);
         this.router.navigate(['/projects/dashboard']);
       },
       error: (error) => {
         console.error('Login failed:', error);
-      }
+      },
     });
   }
 
@@ -44,6 +43,7 @@ export class Login {
   }
 
   get isValid(): boolean {
-    return this.email.trim().length > 0 && this.password.trim().length > 0;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(this.email) && this.password.trim().length > 5;
   }
 }
