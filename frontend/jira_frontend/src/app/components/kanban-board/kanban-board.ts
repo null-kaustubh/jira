@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Task, TaskStatus } from 'src/app/types/task';
 
 @Component({
@@ -10,6 +10,7 @@ import { Task, TaskStatus } from 'src/app/types/task';
   styleUrl: './kanban-board.css',
 })
 export class KanbanBoard {
+  @Input() projectId!: number;
   taskStatus = ['TO DO', 'IN PROGRESS', 'IN REVIEW', 'DONE'];
   tasks: Task[] = [
     { id: 1, title: 'Design Layout', status: 'TO DO', description: 'random', assignee: 'AK' },
@@ -22,6 +23,7 @@ export class KanbanBoard {
   dragOverStatus: string | null = null;
   dragOverTaskId: number | null = null; // Changed: store task ID
   dragOverPosition: 'before' | 'after' | 'end' = 'end'; // Changed: store position relative to task
+  recentlyCompleted = new Set<number>(); // track tasks that just moved to DONE to trigger CSS animation
 
   getTasksByStatus(status: string) {
     return this.tasks.filter((t) => t.status === status);
@@ -69,12 +71,12 @@ export class KanbanBoard {
     if (taskIndex === -1) return;
 
     const [draggedTask] = this.tasks.splice(taskIndex, 1);
+
+    const prevStatus = draggedTask.status;
     draggedTask.status = status as TaskStatus;
 
     let insertAt: number;
-
     if (this.dragOverTaskId === null) {
-      // Drop at end of column
       const columnTasks = this.tasks.filter((t) => t.status === status);
       if (columnTasks.length > 0) {
         const lastTaskIndex = this.tasks.findIndex(
@@ -85,9 +87,7 @@ export class KanbanBoard {
         insertAt = this.tasks.length;
       }
     } else {
-      // Drop relative to a specific task
       const targetIndex = this.tasks.findIndex((t) => t.id === this.dragOverTaskId);
-
       if (targetIndex !== -1) {
         insertAt = this.dragOverPosition === 'after' ? targetIndex + 1 : targetIndex;
       } else {
@@ -96,6 +96,14 @@ export class KanbanBoard {
     }
 
     this.tasks.splice(insertAt, 0, draggedTask);
+
+    if (status === 'DONE' && prevStatus !== 'DONE') {
+      this.recentlyCompleted.add(draggedTask.id);
+      setTimeout(() => {
+        this.recentlyCompleted.delete(draggedTask.id);
+      }, 900); // matches CSS animation duration
+    }
+
     this.clearDragState();
   }
 

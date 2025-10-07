@@ -1,0 +1,63 @@
+<div class="space-y-8 animate-fade-in">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-neutral-100 tracking-tight">
+          Welcome back, <span class="bg-gradient-to-r from-sky-400 to-indigo-500 text-transparent bg-clip-text">{{ username }} </span>!
+        </h1>
+        <p class="text-neutral-400 mt-1">Here's your snapshot for today. Let's make it productive.</p>
+      </div>
+      <button class="bg-sky-500 font-semibold text-white px-5 py-2.5 rounded-lg text-sm cursor-pointer hover:bg-sky-600 transition-all shadow-lg shadow-sky-500/20">
+        + New Task
+      </button>
+    </header>
+  
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="lg:col-span-2 space-y-6">
+        
+        <div class="widget-card">
+          <h2 class="widget-title">My Tasks for Today</h2>
+          <ul class="space-y-3 mt-4">
+            <li *ngFor="let task of tasks" class="flex items-center justify-between p-3 rounded-md hover:bg-white/5 transition-colors">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" [checked]="task.completed" class="w-4 h-4 rounded bg-slate-700 border-neutral-600 text-sky-500 focus:ring-sky-500">
+                <span [class.line-through]="task.completed" [class.text-neutral-500]="task.completed">{{ task.text }}</span>
+              </div>
+              <span class="text-xs text-neutral-500 cursor-pointer hover:text-sky-400">Details</span>
+            </li>
+          </ul>
+        </div>
+  
+        <div class="widget-card">
+          <h2 class="widget-title">Recent Projects</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div *ngFor="let project of recentProjects" class="bg-slate-800/50 p-4 rounded-lg border border-neutral-700 hover:border-sky-500 transition-all cursor-pointer">
+              <h3 class="font-semibold text-neutral-100">{{ project.name }}</h3>
+              <p class="text-xs text-neutral-400 mt-1">{{ project.members }} Members</p>
+              <div class="w-full bg-neutral-700 rounded-full h-1.5 mt-3">
+                <div class="bg-sky-500 h-1.5 rounded-full" [style.width.%]="project.progress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="lg:col-span-1">
+        <div class="widget-card h-full flex flex-col items-center justify-center text-center">
+          <h2 class="widget-title">Weekly Progress</h2>
+          <div class="relative w-48 h-48 my-4">
+            <svg class="w-full h-full" viewBox="0 0 100 100">
+              <circle class="text-neutral-700" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+              <circle class="text-sky-500" stroke-width="8" [attr.stroke-dasharray]="2 * 3.14159 * 45" [attr.stroke-dashoffset]="progressOffset" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s ease-out;" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-3xl font-bold text-white">{{ weeklyProgress }}%</span>
+              <span class="text-sm text-neutral-400">Completed</span>
+            </div>
+          </div>
+          <p class="text-xs text-neutral-500">You're doing great, keep it up!</p>
+        </div>
+      </div>
+  
+    </main>
+  </div>

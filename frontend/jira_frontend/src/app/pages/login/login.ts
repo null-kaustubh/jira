@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/User/user-service';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +28,6 @@ export class Login {
 
     this.userService.loginUser({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        console.log('Login successful:', response);
         localStorage.setItem('token', response.token);
         this.router.navigate(['/projects/dashboard']);
       },
