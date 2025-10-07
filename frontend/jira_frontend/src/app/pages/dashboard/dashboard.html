@@ -35,7 +35,63 @@
         <nav class="space-y-2 whitespace-nowrap">
           <a routerLink="/dashboard" routerLinkActive="bg-sky-500/20 text-sky-400" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors">Dashboard</a>
           <a routerLink="/users" routerLinkActive="bg-sky-500/20 text-sky-400" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors">Users</a>
-          <a routerLink="/projects" routerLinkActive="bg-sky-500/20 text-sky-400" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors">Projects</a>
+          <div class="relative">
+            <button
+              (click)="toggleProjects()"
+              class="flex items-center justify-between w-full px-2 py-2 rounded hover:bg-neutral-700"
+            >
+              <span class="flex items-center gap-2">
+                <lucide-icon name="Folder" size="16"></lucide-icon>
+                Projects
+              </span>
+              <lucide-icon
+                [name]="projectsExpanded ? 'ChevronUp' : 'ChevronDown'"
+                size="16"
+              ></lucide-icon>
+            </button>
+            <div *ngIf="projectsExpanded" class="pl-6 mt-2 space-y-1">
+              <ng-container *ngIf="projects.length > 0; else noProjects">
+                <a
+                  *ngFor="let project of projects"
+                  [routerLink]="['/projects', project.id, 'dashboard']"
+                  routerLinkActive="is-active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  #rla="routerLinkActive"
+                  class="group relative flex items-center rounded-md px-3 py-2 text-sm transition-colors"
+                  [ngClass]="{
+                    'text-sky-500 bg-sky-500/10 hover:bg-sky-500/15': rla.isActive,
+                    'text-neutral-300 hover:text-neutral-50 hover:bg-neutral-800/60': !rla.isActive
+                  }"
+                  [attr.aria-current]="rla.isActive ? 'page' : null"
+                >
+                  <span
+                    class="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r transition-opacity"
+                    [ngClass]="{
+                      'bg-sky-500 opacity-100': rla.isActive,
+                      'bg-neutral-500/60 opacity-0 group-hover:opacity-60': !rla.isActive
+                    }"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="truncate">{{ project.name }}</span>
+                </a>
+              </ng-container>
+   
+              <ng-template #noProjects>
+                <div
+                  *ngIf="userRole === 'manager' || userRole === 'admin'"
+                  class="text-sm text-neutral-400"
+                >
+                  No projects yet.
+                  <button class="text-sky-500 hover:underline mt-1 block" (click)="createProject()">
+                    + Create Project
+                  </button>
+                </div>
+                <div *ngIf="userRole === 'user'" class="text-sm text-neutral-400">
+                  You haven't been added to any projects yet.
+                </div>
+              </ng-template>
+            </div>
+          </div>
         </nav>
       </aside>
   

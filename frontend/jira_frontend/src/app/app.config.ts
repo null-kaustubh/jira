@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  importProvidersFrom,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -12,6 +13,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './services/auth.interceptor';
 
+import {
+  ChevronDown,
+  ChevronUp,
+  Folder,
+  House,
+  LucideAngularModule,
+  Settings,
+} from 'lucide-angular';
+
 registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
@@ -21,6 +31,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideHttpClient(withInterceptors([authInterceptor])) 
+    provideHttpClient(withInterceptors([authInterceptor])) ,
+    importProvidersFrom(
+      LucideAngularModule.pick({ House, Folder, ChevronDown, ChevronUp, Settings })
+    ),
   ],
 };
