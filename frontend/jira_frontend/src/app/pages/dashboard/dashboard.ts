@@ -1,18 +1,23 @@
 import { Component } from '@angular/core';
-import { KanbanBoard } from '../components/kanban-board/kanban-board';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, KanbanBoard],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
-export class Dashboard {
+export class MainLayoutComponent {
   isSidebarCollapsed = false;
+  userInitial = 'K';
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  logout() {
+    console.log('Logout clicked');
   }
 }

@@ -1,27 +1,37 @@
 import { Routes } from '@angular/router';
+import { MainLayoutComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
   {
-    path: '',
-    loadComponent: () => {
-      return import('./login/login').then((m) => m.Login);
-    },
+    path: 'login',
+    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
     path: 'register',
-    loadComponent: () => {
-      return import('./register/register').then((m) => m.Register);
-    },
+    loadComponent: () => import('./pages/register/register').then((m) => m.Register),
   },
+
+  // Parent route that uses the layout for all its children
   {
-    path: 'projects',
+    path: '', // This will now handle routes like '/dashboard', '/users'
+    component: MainLayoutComponent,
+    // canActivate: [AuthGuard], // You can add a guard here later
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => {
-          return import('./dashboard/dashboard').then((m) => m.Dashboard);
-        },
+        loadComponent: () => import('./pages/home/home').then((m) => m.HomeComponent),
       },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/users/users.component').then((m) => m.UsersComponent),
+      },
+      // ... add other child routes like 'projects' here
     ],
   },
+
+  // Redirect the root path to the login page
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+
+  // Wildcard route for any other URL
+  { path: '**', redirectTo: '/login' },
 ];

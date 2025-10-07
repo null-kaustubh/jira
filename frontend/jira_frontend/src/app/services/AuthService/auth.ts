@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginUser, User } from './authInterface';
+import { JwtService } from '../JWT/jwtService';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { LoginUser, User } from './authInterface';
 export class Auth {
   private apiUrl = 'http://localhost:8080/api/user';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private jwtService: JwtService) {}
 
   getUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/profile`);
@@ -23,11 +24,7 @@ export class Auth {
     return this.http.post<LoginUser>(`${this.apiUrl}/login`, login);
   }
 
-  // updateUser(id: number, user: User): Observable<User> {
-  //   return this.http.put<User>(`${this.apiUrl}/${id}`, user);
-  // }
-
-  // deleteUser(id: number): Observable<any> {
-  //   return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
-  // }
+  logout(): void {
+    localStorage.removeItem('token');
+  }
 }

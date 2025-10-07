@@ -1,0 +1,23 @@
+/* Styling for our glassmorphism widgets */
+.widget-card {
+    /* Frosted glass effect */
+    background-color: rgba(26, 32, 44, 0.6); /* bg-[#1a202c] with alpha */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); /* For Safari */
+    
+    @apply rounded-xl border border-neutral-700/50 p-6 shadow-2xl;
+  }
+  
+  .widget-title {
+    @apply text-lg font-semibold text-neutral-200;
+  }
+  
+  /* A simple fade-in animation for the whole page */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
