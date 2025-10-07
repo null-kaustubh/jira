@@ -33,7 +33,7 @@ public class UserController {
     }
     
     @GetMapping
-    public ResponseEntity<?> getAllUsers(@RequestHeader("JWTAuthorization") String authHeader){
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String authHeader){
     		try {
     			String token = authHeader.substring(7);
     			if (!jwtUtil.validateToken(token)) {
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
+    public ResponseEntity<?> profile(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
             if (!jwtUtil.validateToken(token)) {
@@ -97,7 +97,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
-        @PathVariable Long id, @RequestBody User updates, @RequestHeader("JWTAuthorization") String authHeader
+        @PathVariable Long id, @RequestBody User updates, @RequestHeader("Authorization") String authHeader
     ) {
         if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
@@ -125,7 +125,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(
-        @PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader
+        @PathVariable Long id, @RequestHeader("Authorization") String authHeader
     ) {
         if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
