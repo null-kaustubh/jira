@@ -25,6 +25,17 @@ export const routes: Routes = [
         path: 'users',
         loadComponent: () => import('./pages/users/users.component').then((m) => m.UsersComponent),
       },
+      {
+        path: 'projects/:id',
+        children: [
+          {
+            path: 'boards',
+            loadComponent: () => {
+              return import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard);
+            },
+          },
+        ],
+      },
       // ... add other child routes like 'projects' here
     ],
   },

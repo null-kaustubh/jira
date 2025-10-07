@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProjectController {
 
     private final ProjectService projectService;
@@ -30,20 +31,19 @@ public class ProjectController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-	@PostMapping
-	public ResponseEntity<Project> createProject(@RequestBody Project project,
-			@RequestHeader("JWTAuthorization") String authHeader) {
-		try {
-			String token = authHeader.replace("Bearer ", "");
-			Project createdProject = projectService.createProject(project, token);
-			return ResponseEntity.ok(createdProject);
-		} catch (SecurityException e) {
-			return ResponseEntity.status(403).body(null);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(null);
-		}
-	}
-
+    @PostMapping
+    public ResponseEntity<Project> createProject(@RequestBody Project project,
+            @RequestHeader("JWTAuthorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            Project createdProject = projectService.createProject(project, token);
+            return ResponseEntity.ok(createdProject);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
