@@ -5,11 +5,12 @@ import { LucideAngularModule } from 'lucide-angular';
 import { ProjectFull } from 'src/app/types/project';
 import { ProjectService } from 'src/app/services/ProjectService/project-service';
 import { JwtService } from 'src/app/services/JWT/jwtService';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -59,4 +60,53 @@ export class MainLayoutComponent {
   }
 
   createProject() {}
+
+  // Modal control
+isCreateProjectModalOpen = false;
+
+// New project model
+newProject: any = {
+  name: '',
+  description: '',
+  managerId: null,
+  employeeIdsString: '', // input as comma separated string
+  status: 'ACTIVE'       // default value
+};
+
+// Open/close modal
+openCreateProjectModal() {
+  this.isCreateProjectModalOpen = true;
+}
+
+closeCreateProjectModal() {
+  this.isCreateProjectModalOpen = false;
+  this.newProject = { name: '', description: '', managerId: null, employeeIdsString: '', status: 'ACTIVE' };
+}
+
+// Submit create project
+submitCreateProject() {
+  const employeeIds = this.newProject.employeeIdsString
+    ? this.newProject.employeeIdsString.split(',').map((id: string) => +id.trim())
+    : [];
+
+  const payload = {
+    name: this.newProject.name,
+    description: this.newProject.description,
+    managerId: this.newProject.managerId,
+    employeeIds: employeeIds,
+    status: this.newProject.status
+  };
+
+  this.projectService.createProject(payload).subscribe({
+    next: (res) => {
+      this.getAllProjects(); // refresh project list
+      this.closeCreateProjectModal();
+    },
+    error: (err) => {
+      console.error('Error creating project:', err);
+      alert('Failed to create project');
+    }
+  });
+}
+
 }
