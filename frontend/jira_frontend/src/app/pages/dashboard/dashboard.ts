@@ -6,11 +6,22 @@ import { ProjectFull } from 'src/app/types/project';
 import { ProjectService } from 'src/app/services/ProjectService/project-service';
 import { JwtService } from 'src/app/services/JWT/jwtService';
 import { FormsModule } from '@angular/forms';
+import { User } from 'src/app/types/User';
+import { UserService } from 'src/app/services/user-service';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    LucideAngularModule,
+    FormsModule,
+    NgSelectModule,
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -19,15 +30,20 @@ export class MainLayoutComponent {
   projectsExpanded = false;
   projectId: number | null = null;
   userInitial = 'K';
+  showEmployeeDropdown = false;
+
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private empService: UserService
   ) {}
 
   projects: ProjectFull[] = [];
   isLoading = true;
   userRole: string | null = null;
+  employees: User[] = [];
+  selectedEmployeeIds: number[] = [];
 
   ngOnInit() {
     this.userRole = this.jwtService.getUserRole();
@@ -36,6 +52,23 @@ export class MainLayoutComponent {
       this.projectId = id ? +id : null;
     });
     this.getAllProjects();
+    this.empService.getAllUsers().subscribe({
+      next: (res) => {
+        this.employees = res.users.filter((u) => u.role === 'EMPLOYEE');
+      },
+      error: (err) => {
+        console.error('Error fetching users:', err);
+        this.employees = [];
+      },
+    });
+  }
+
+  toggleEmployeeSelection(employeeId: number, event: any) {
+    if (event.target.checked) {
+      this.selectedEmployeeIds.push(employeeId);
+    } else {
+      this.selectedEmployeeIds = this.selectedEmployeeIds.filter((id) => id !== employeeId);
+    }
   }
 
   getAllProjects() {
@@ -68,7 +101,7 @@ export class MainLayoutComponent {
     description: '',
     managerId: null,
     employeeIdsString: '',
-    status: 'ACTIVE'
+    status: 'ACTIVE',
   };
 
   openCreateProjectModal() {
@@ -77,32 +110,35 @@ export class MainLayoutComponent {
 
   closeCreateProjectModal() {
     this.isCreateProjectModalOpen = false;
-    this.newProject = { name: '', description: '', managerId: null, employeeIdsString: '', status: 'ACTIVE' };
+    this.newProject = {
+      name: '',
+      description: '',
+      managerId: null,
+      employeeIdsString: '',
+      status: 'ACTIVE',
+    };
   }
 
   submitCreateProject() {
-    const employeeIds = this.newProject.employeeIdsString
-      ? this.newProject.employeeIdsString.split(',').map((id: string) => +id.trim())
-      : [];
+    const userId = this.jwtService.getUserId();
 
     const payload = {
       name: this.newProject.name,
       description: this.newProject.description,
-      managerId: this.newProject.managerId,
-      employeeIds: employeeIds,
-      status: this.newProject.status
+      manager_id: userId,
+      employeeIds: this.selectedEmployeeIds,
+      status: this.newProject.status,
     };
 
     this.projectService.createProject(payload).subscribe({
-      next: (res) => {
+      next: () => {
         this.getAllProjects();
         this.closeCreateProjectModal();
       },
       error: (err) => {
         console.error('Error creating project:', err);
         alert('Failed to create project');
-      }
+      },
     });
   }
-
 }

@@ -40,7 +40,7 @@ public class UserController {
                     return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
              }
     			String role = jwtUtil.extractRole(token);
-    			if(!"ADMIN".equalsIgnoreCase(role)) {
+    			if(!"ADMIN".equalsIgnoreCase(role) && !"MANAGER".equalsIgnoreCase(role)) {
     				return ResponseEntity.status(403).body(java.util.Map.of("error", "Unauthorized."));    				
     			}
     			List<User> users = userService.findAllUsers();
@@ -56,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             User registeredUser = userService.registerUser(user);
-            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole());
+            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole(), registeredUser.getUser_id());
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User registered successfully", "token", token));
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class UserController {
         try {
             User authenticatedUser = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
+            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole(), authenticatedUser.getUser_id());
 
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User logged in successfully", "token", token));
