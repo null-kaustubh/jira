@@ -31,7 +31,7 @@
                 <td class="px-6 py-4 text-neutral-300 capitalize">{{ user.role }}</td>
                 <td class="px-6 py-4 text-right">
                   <button 
-                    (click)="handleDeleteUser(user.id || '0')"
+                    (click)="handleDeleteUser(user.user_id)"
                     class="font-medium text-red-500 hover:text-red-400 transition-colors"
                   >
                     Delete

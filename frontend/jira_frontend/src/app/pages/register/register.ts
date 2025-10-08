@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from 'src/app/services/AuthService/authInterface';
 import { Auth } from 'src/app/services/AuthService/auth';
+import { NewUser } from 'src/app/types/User';
 
 @Component({
   selector: 'app-register',
@@ -14,14 +14,12 @@ import { Auth } from 'src/app/services/AuthService/auth';
   styleUrl: './register.css',
 })
 export class Register {
-  // Form fields
   email = '';
   username = '';
   password = '';
-  role = 'user'; // Default role
+  role = 'user';
   showPass = false;
 
-  // Password validation state
   validations = {
     hasMixedCase: false,
     hasDigit: false,
@@ -64,11 +62,11 @@ export class Register {
   submitForm() {
     if (!this.isValid) return;
 
-    const newUser: User = {
+    const newUser: NewUser = {
       email: this.email,
       password: this.password,
       username: this.username,
-      role: this.role, // Use the selected role from the form
+      role: this.role,
     };
 
     this.authService.registerUser(newUser).subscribe({
