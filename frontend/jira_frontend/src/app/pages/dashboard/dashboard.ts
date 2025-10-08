@@ -6,9 +6,9 @@ import { ProjectFull } from 'src/app/types/project';
 import { ProjectService } from 'src/app/services/ProjectService/project-service';
 import { JwtService } from 'src/app/services/JWT/jwtService';
 import { FormsModule } from '@angular/forms';
-import { User } from 'src/app/types/User';
 import { UserService } from 'src/app/services/user-service';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { User } from 'src/app/services/AuthService/authInterface';
 
 @Component({
   selector: 'app-main-layout',

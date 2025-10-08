@@ -15,13 +15,17 @@ import { UserService } from 'src/app/services/user-service';
 export class UsersComponent implements OnInit {
   users: User[] = [];
   isLoading = true;
-  role : string | null = null;
+  role: string | null = null;
 
-  constructor(private userService: UserService, private router: Router, private jwtService : JwtService) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private jwtService: JwtService
+  ) {}
 
   ngOnInit(): void {
     this.role = this.jwtService.getUserRole();
-    if( "ADMIN".toUpperCase() === this.role) this.loadUsers();
+    if ('ADMIN'.toUpperCase() === this.role) this.loadUsers();
   }
 
   loadUsers(): void {
@@ -30,7 +34,7 @@ export class UsersComponent implements OnInit {
       next: (data) => {
         this.users = data.users.length ? data.users : [];
         console.log(this.users);
-        
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -44,11 +48,11 @@ export class UsersComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
-  handleDeleteUser(id: string): void {
+  handleDeleteUser(id: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
       this.userService.deleteUser(id).subscribe({
         next: () => {
-          this.users = this.users.filter(user => user.user_id !== id);
+          this.users = this.users.filter((user) => user.user_id !== id);
         },
         error: (err) => {
           console.error('Failed to delete user', err);

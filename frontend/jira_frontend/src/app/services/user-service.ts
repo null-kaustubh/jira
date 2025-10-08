@@ -11,20 +11,18 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-<<<<<<< HEAD
-  loginUser(user: User): Observable<{ token: string; message: string }> {
+  loginUser(user: {
+    email: string;
+    password: string;
+  }): Observable<{ token: string; message: string }> {
     return this.http.post<{ token: string; message: string }>(this.apiUrl + '/login', user);
-=======
-  loginUser(user: { email: string, password: string } ): Observable<{token : string, message : string}> {
-    return this.http.post<{token : string, message : string}>(this.apiUrl+'/login', user );
->>>>>>> 9e8a2675bb3d080fe10bc63100f4629937dc8d72
   }
 
   getAllUsers(): Observable<{ users: User[] }> {
     return this.http.get<{ users: User[] }>(`${this.apiUrl}`);
   }
 
-  deleteUser(id: string): Observable<void> {
+  deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 

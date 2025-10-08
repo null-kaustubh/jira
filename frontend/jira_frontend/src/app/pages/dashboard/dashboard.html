@@ -186,7 +186,7 @@
                     <input
                       type="checkbox"
                       [value]="emp.user_id"
-                      [checked]="selectedEmployeeIds.includes(emp.user_id!)"
+                      [checked]="selectedEmployeeIds.includes(emp.user_id)"
                       (change)="toggleEmployeeSelection(emp.user_id!, $event)"
                       class="accent-sky-500"
                     />
