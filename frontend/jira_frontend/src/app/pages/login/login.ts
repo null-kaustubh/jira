@@ -29,7 +29,7 @@ export class Login {
     this.userService.loginUser({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         localStorage.setItem('token', response.token);
-        this.router.navigate(['/projects/dashboard']);
+        this.router.navigate(['']);
       },
       error: (error) => {
         console.error('Login failed:', error);

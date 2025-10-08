@@ -2,6 +2,8 @@ package com.example.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "jira_projects")
@@ -31,7 +33,19 @@ public class Project {
     @Column(name="status")
     private String status;
 
-    public Project() {
+    @ManyToMany
+    @JoinTable(name = "project_employees",joinColumns = @JoinColumn(name = "project_id"),inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> employees = new HashSet<>();
+
+    public Set<User> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(Set<User> employees) {
+		this.employees = employees;
+	}
+
+	public Project() {
     }
 
     public Project(Long id, String name, String description, LocalDateTime createdAt, String createdBy, User manager) {

@@ -10,15 +10,12 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./pages/register/register').then((m) => m.Register),
   },
-
-  // Parent route that uses the layout for all its children
   {
-    path: '', // This will now handle routes like '/dashboard', '/users'
+    path: '',
     component: MainLayoutComponent,
-    // canActivate: [AuthGuard], // You can add a guard here later
     children: [
       {
-        path: 'dashboard',
+        path: '',
         loadComponent: () => import('./pages/home/home').then((m) => m.HomeComponent),
       },
       {
@@ -36,13 +33,7 @@ export const routes: Routes = [
           },
         ],
       },
-      // ... add other child routes like 'projects' here
     ],
   },
-
-  // Redirect the root path to the login page
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-
-  // Wildcard route for any other URL
   { path: '**', redirectTo: '/login' },
 ];
