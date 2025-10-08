@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Task, TaskStatus } from 'src/app/types/task';
+import { Navbar } from '../navbar/navbar';
 
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Navbar],
   templateUrl: './kanban-board.html',
   styleUrl: './kanban-board.css',
 })

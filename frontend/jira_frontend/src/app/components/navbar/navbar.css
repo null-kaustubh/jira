@@ -1,0 +1,9 @@
+.active {
+    color: #60a5fa; /* blue-400 */
+    border-bottom: 2px solid #60a5fa;
+    padding-bottom: 0.25rem;
+  }
+  
+*{
+        background-color:  rgba(26, 32, 44, 0.6);
+}
