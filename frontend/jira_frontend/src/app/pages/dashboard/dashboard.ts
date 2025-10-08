@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from 'src/app/services/user-service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { User } from 'src/app/services/AuthService/authInterface';
+import { TaskComponent } from '../task/task';
 
 @Component({
   selector: 'app-main-layout',
@@ -21,6 +22,7 @@ import { User } from 'src/app/services/AuthService/authInterface';
     LucideAngularModule,
     FormsModule,
     NgSelectModule,
+    TaskComponent
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
