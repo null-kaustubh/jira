@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import {
+  RouterLink,
+  RouterOutlet,
+  RouterLinkActive,
+  ActivatedRoute,
+  Router,
+  NavigationEnd,
+} from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ProjectFull } from 'src/app/types/project';
 import { ProjectService } from 'src/app/services/ProjectService/project-service';
@@ -9,6 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from 'src/app/services/user-service';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { User } from 'src/app/services/AuthService/authInterface';
+import { Navbar } from 'src/app/components/navbar/navbar';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
@@ -21,6 +30,7 @@ import { User } from 'src/app/services/AuthService/authInterface';
     LucideAngularModule,
     FormsModule,
     NgSelectModule,
+    Navbar,
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -31,9 +41,12 @@ export class MainLayoutComponent {
   projectId: number | null = null;
   userInitial = 'K';
   showEmployeeDropdown = false;
+  showNavbar = false;
+  projectName: string = '';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private projectService: ProjectService,
     private jwtService: JwtService,
     private empService: UserService
@@ -47,20 +60,53 @@ export class MainLayoutComponent {
 
   ngOnInit() {
     this.userRole = this.jwtService.getUserRole();
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      this.projectId = id ? +id : null;
+
+    // Initial check
+    this.updateProjectContext();
+
+    // Listen to navigation changes
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateProjectContext();
     });
+
     this.getAllProjects();
+
     this.empService.getAllUsers().subscribe({
       next: (res) => {
         this.employees = res.users.filter((u) => u.role === 'EMPLOYEE');
       },
       error: (err) => {
-        console.error('Error fetching users:', err);
         this.employees = [];
       },
     });
+  }
+
+  updateProjectContext() {
+    const url = this.router.url;
+
+    // Match URLs like /projects/123/summary, /projects/123/tasks, etc.
+    const projectMatch = url.match(/\/projects\/(\d+)/);
+
+    if (projectMatch) {
+      const newProjectId = +projectMatch[1];
+
+      this.projectId = newProjectId;
+      this.showNavbar = true;
+
+      // Fetch project name
+      this.projectService.getProjectById(newProjectId).subscribe({
+        next: (project) => {
+          this.projectName = project.name;
+        },
+        error: (err) => {
+          this.projectName = 'Unknown Project';
+        },
+      });
+    } else {
+      this.projectId = null;
+      this.projectName = '';
+      this.showNavbar = false;
+    }
   }
 
   toggleEmployeeSelection(employeeId: number, event: any) {

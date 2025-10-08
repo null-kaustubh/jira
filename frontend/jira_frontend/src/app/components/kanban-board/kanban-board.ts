@@ -2,12 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Task, TaskStatus } from 'src/app/types/task';
-import { Navbar } from '../navbar/navbar';
 
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [CommonModule, FormsModule, Navbar],
+  imports: [CommonModule, FormsModule],
   templateUrl: './kanban-board.html',
   styleUrls: ['./kanban-board.css'],
 })
@@ -18,7 +17,13 @@ export class KanbanBoard {
     { id: 1, title: 'Design Layout', status: 'TO DO', description: 'random', assignee: 'AK' },
     { id: 2, title: 'Assign tasks', status: 'TO DO', description: 'random2', assignee: 'Kaustubh' },
     { id: 3, title: 'Meeting', status: 'TO DO', description: 'random3', assignee: 'Gaikwad' },
-    { id: 4, title: 'Kanban Board', status: 'TO DO', description: 'Develop Kanban board UI', assignee: 'mahesh' },
+    {
+      id: 4,
+      title: 'Kanban Board',
+      status: 'TO DO',
+      description: 'Develop Kanban board UI',
+      assignee: 'mahesh',
+    },
   ];
 
   draggingTaskId: number | null = null;
@@ -152,7 +157,7 @@ export class KanbanBoard {
 
   saveTask() {
     if (this.selectedTask) {
-      const index = this.tasks.findIndex(t => t.id === this.selectedTask!.id);
+      const index = this.tasks.findIndex((t) => t.id === this.selectedTask!.id);
       if (index !== -1) {
         this.tasks[index] = { ...this.selectedTask };
       }
