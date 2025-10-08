@@ -227,6 +227,7 @@
           >Dashboard</a
         >
         <a
+          *ngIf="userRole?.toUpperCase() === 'ADMIN'"
           routerLink="/users"
           routerLinkActive="bg-sky-500/20 text-sky-400"
           class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors"
