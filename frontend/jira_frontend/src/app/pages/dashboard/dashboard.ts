@@ -10,14 +10,14 @@ import {
 } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ProjectFull } from 'src/app/types/project';
-import { ProjectService } from 'src/app/services/ProjectService/project-service';
-import { JwtService } from 'src/app/services/JWT/jwtService';
+import { ProjectService } from 'src/app/services/project-service';
+import { JwtService } from 'src/app/services/jwtService';
 import { FormsModule } from '@angular/forms';
 import { UserService } from 'src/app/services/user-service';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { User } from 'src/app/services/AuthService/authInterface';
 import { Navbar } from 'src/app/components/navbar/navbar';
 import { filter } from 'rxjs';
+import { User } from 'src/app/types/authInterface';
 
 @Component({
   selector: 'app-main-layout',

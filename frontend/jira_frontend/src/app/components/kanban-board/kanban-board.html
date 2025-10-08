@@ -1,145 +1,98 @@
-<div class="overflow-x-auto mt-4">
-  <div class="flex w-max min-w-full mx-auto gap-4">
-    @for (status of taskStatus; track $index) {
-
-    <div
-      class="relative bg-zinc-900 flex-none w-70 rounded-md p-3 transition-colors duration-300"
-      (dragover)="onDragOver($event, status, null)"
-      (drop)="onDrop($event, status)"
-    >
-      <h3 class="mb-4 text-neutral-300 flex items-center justify-between">
-        <span class="text-xs font-semibold tracking-widest text-neutral-400">{{ status }}</span>
-        <ng-container [ngSwitch]="status">
-          <span *ngSwitchCase="'DONE'" class="inline-flex items-center text-emerald-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
+<div class="w-full overflow-hidden">
+  <div class="flex justify-evenly gap-6 px-4 py-5">
+    <ng-container *ngFor="let status of taskStatus; let i = index">
+      <div
+        class="flex-1 min-w-0 h-[600px] rounded-xl p-4 transition-transform duration-300 cursor-pointer"
+        [ngClass]="getColumnGradient(i)"
+        (dragover)="onDragOver($event, status, null)"
+        (drop)="onDrop($event, status)"
+      >
+<h3 class="mb-2 flex items-center justify-between text-sm font-semibold text-white">
+  <span class="tracking-widest">{{ status }}</span>
+  <ng-container [ngSwitch]="status">
+    <span *ngSwitchCase="'DONE'" class="inline-flex items-center text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+        <path fill-rule="evenodd" d="M10.28 15.72a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l2.47 2.47 5.97-5.97a.75.75 0 1 1 1.06 1.06l-6.5 6.5z" clip-rule="evenodd"/>
+      </svg>
+    </span>
+    <span *ngSwitchDefault class="text-white">{{ getTasksByStatus(status).length }}</span>
+  </ng-container>
+</h3>
+<div [ngClass]="getGlowBarClass(i)" class="h-[3px] w-full rounded-full mb-4 transition-all duration-300"></div>
+        <div class="flex flex-col gap-3 h-full overflow-hidden">
+          <ng-container *ngFor="let task of getTasksByStatus(status)">
+            <div *ngIf="dragOverStatus === status && dragOverTaskId === task.id && dragOverPosition === 'before'"
+                 class="h-1 bg-white/60 rounded transition-all duration-150"></div>
+            <div
+              class="flex justify-between items-start p-3 rounded-lg bg-zinc-800/80 shadow-md cursor-move
+                     transition-transform duration-200 hover:scale-105 border border-transparent"
+              draggable="true"
+              (dragstart)="onDragStart($event, task)"
+              (dragend)="onDragEnd($event)"
+              (dragover)="onDragOver($event, status, task.id)"
+              (click)="openModal(task)"
+              [ngClass]="{
+                'ring-2 ring-emerald-400/40': status==='DONE' && recentlyCompleted.has(task.id),
+                'ring-2 ring-yellow-400/40': status==='IN PROGRESS' && recentlyCompleted.has(task.id),
+                'ring-2 ring-purple-400/30': status==='IN REVIEW' && recentlyCompleted.has(task.id),
+                'ring-2 ring-blue-400/30': status==='TO DO' && recentlyCompleted.has(task.id)
+              }"
             >
-              <path
-                fill-rule="evenodd"
-                d="M10.28 15.72a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l2.47 2.47 5.97-5.97a.75.75 0 1 1 1.06 1.06l-6.5 6.5z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <span class="sr-only">{{ getTasksByStatus(status).length }} done</span>
-          </span>
-          <span *ngSwitchDefault class="text-neutral-400">
-            {{ getTasksByStatus(status).length }}
-          </span>
-        </ng-container>
-      </h3>
-
-      <div>
-        @for (task of getTasksByStatus(status); track task.id) {
-
-        <div
-          *ngIf="
-            dragOverStatus === status && dragOverTaskId === task.id && dragOverPosition === 'before'
-          "
-          class="h-0.5 bg-blue-500 rounded my-1 transition-all duration-150"
-        ></div>
-
-        <div
-          class="flex items-end justify-between px-2 py-1 bg-zinc-800 rounded-sm my-1 shadow-md cursor-move"
-          draggable="true"
-          (dragstart)="onDragStart($event, task)"
-          (dragend)="onDragEnd($event)"
-          (dragover)="onDragOver($event, status, task.id)"
-          (click)="openModal(task)"
-          [class.done-splash1]="status === 'DONE' && recentlyCompleted.has(task.id)"
-          [class.done-splash2]="status === 'IN REVIEW' && recentlyCompleted.has(task.id)"
-          [class.done-splash3]="status === 'IN PROGRESS' && recentlyCompleted.has(task.id)"
-          [class.done-splash4]="status === 'TO DO' && recentlyCompleted.has(task.id)"
-
-        >
-          <div class="flex flex-col gap-2">
-            <h4>{{ task.title }}</h4>
-            <p>{{ task.description }}</p>
-            <p>{{ task.id }}</p>
-          </div>
-          <p>{{ task.assignee }}</p>
+              <div class="flex flex-col gap-1">
+                <h4 class="text-sm font-semibold text-white">{{ task.title }}</h4>
+                <p class="text-xs text-gray-300 line-clamp-2">{{ task.description }}</p>
+                <p class="text-xs text-gray-400">#{{ task.id }}</p>
+              </div>
+              <p class="text-xs text-white font-medium">{{ task.assignee }}</p>
+            </div>
+            <div *ngIf="dragOverStatus === status && dragOverTaskId === task.id && dragOverPosition === 'after'"
+                 class="h-1 bg-white/60 rounded transition-all duration-150"></div>
+          </ng-container>
+          <div *ngIf="dragOverStatus === status && dragOverTaskId === null"
+               class="h-1 bg-white/60 rounded transition-all duration-150"></div>
         </div>
-
-        <div
-          *ngIf="
-            dragOverStatus === status && dragOverTaskId === task.id && dragOverPosition === 'after'
-          "
-          class="h-0.5 bg-blue-500 rounded my-1 transition-all duration-150"
-        ></div>
-
-        }
-
-        <div
-          *ngIf="dragOverStatus === status && dragOverTaskId === null"
-          class="h-0.5 bg-blue-500 rounded my-1 transition-all duration-150"
-        ></div>
       </div>
-    </div>
-
-    }
+    </ng-container>
   </div>
 </div>
+<ng-container *ngIf="showModal && selectedTask">
+  <div class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 overflow-y-auto p-4" (click)="closeModal()">
+    <div class="bg-zinc-900 backdrop-blur-md rounded-2xl max-w-xl w-full p-6 shadow-2xl" (click)="$event.stopPropagation()">
+      <div [ngClass]="getStatusClass(selectedTask.status)" class="mb-4 border-b-2 pb-2">
+        <input *ngIf="isManagerOrAdmin" [(ngModel)]="selectedTask.title" class="w-full text-xl font-bold bg-transparent border-none text-white text-center focus:outline-none" placeholder="Task Title">
+        <h2 *ngIf="!isManagerOrAdmin" class="text-xl font-bold text-white text-center">{{ selectedTask.title }}</h2>
+      </div>
 
-@if (showModal && selectedTask) {
-<div class="modal-overlay" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header" [ngClass]="getStatusClass(selectedTask.status)">
-      <input
-        *ngIf="isManagerOrAdmin"
-        [(ngModel)]="selectedTask.title"
-        class="modal-title"
-        placeholder="Task Title"
-      />
-      <h2 *ngIf="!isManagerOrAdmin" class="modal-title">{{ selectedTask.title }}</h2>
-    </div>
-    <div class="modal-body">
-      <div class="field-group">
-        <label><strong>Description:</strong></label>
-        <textarea
-          *ngIf="isManagerOrAdmin"
-          [(ngModel)]="selectedTask.description"
-          class="modal-input"
-          placeholder="Task Description"
-          rows="1"
-        ></textarea>
-        <p *ngIf="!isManagerOrAdmin">{{ selectedTask.description }}</p>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Description:</label>
+          <textarea *ngIf="isManagerOrAdmin" [(ngModel)]="selectedTask.description" class="w-full p-2 rounded bg-zinc-800 text-white focus:outline-none" rows="2"></textarea>
+          <p *ngIf="!isManagerOrAdmin" class="text-gray-300">{{ selectedTask.description }}</p>
+        </div>
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Assignee:</label>
+          <input *ngIf="isManagerOrAdmin" [(ngModel)]="selectedTask.assignee" class="w-full p-2 rounded bg-zinc-800 text-white focus:outline-none" />
+          <p *ngIf="!isManagerOrAdmin" class="text-gray-300">{{ selectedTask.assignee }}</p>
+        </div>
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Status:</label>
+          <select *ngIf="isManagerOrAdmin" [(ngModel)]="selectedTask.status" class="w-full p-2 rounded bg-zinc-800 text-white focus:outline-none">
+            <ng-container *ngFor="let s of taskStatus">
+              <option [value]="s">{{ s }}</option>
+            </ng-container>
+          </select>
+          <p *ngIf="!isManagerOrAdmin" class="text-gray-300">{{ selectedTask.status }}</p>
+        </div>
+        <div>
+          <label class="block text-gray-400 font-semibold mb-1">Comments:</label>
+          <textarea class="w-full p-2 rounded bg-zinc-800 text-gray-400 cursor-not-allowed" rows="3" placeholder="Comments (coming soon)" disabled></textarea>
+        </div>
       </div>
-      <div class="field-group">
-        <label><strong>Assignee:</strong></label>
-        <input
-          *ngIf="isManagerOrAdmin"
-          [(ngModel)]="selectedTask.assignee"
-          class="modal-input"
-          placeholder="Assignee"
-        />
-        <p *ngIf="!isManagerOrAdmin">{{ selectedTask.assignee }}</p>
+
+      <div class="mt-6 flex justify-center gap-4">
+        <button *ngIf="isManagerOrAdmin" (click)="saveTask()" class="bg-indigo-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-indigo-600 transition">Save</button>
+        <button (click)="closeModal()" class="bg-gray-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-gray-700 transition">Close</button>
       </div>
-      <div class="field-group">
-        <label><strong>Status:</strong></label>
-        <select *ngIf="isManagerOrAdmin" [(ngModel)]="selectedTask.status" class="modal-input">
-          @for (status of taskStatus; track status) {
-          <option [value]="status">{{ status }}</option>
-          }
-        </select>
-        <p *ngIf="!isManagerOrAdmin">{{ selectedTask.status }}</p>
-      </div>
-      <div class="field-group comment-section">
-        <label><strong>Comments:</strong></label>
-        <textarea
-          class="modal-input"
-          placeholder="Comment functionality to be implemented later"
-          disabled
-          rows="4"
-        ></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button *ngIf="isManagerOrAdmin" class="save-button" (click)="saveTask()">Save</button>
-      <button class="close-button" (click)="closeModal()">Close</button>
     </div>
   </div>
-</div>
-}
+</ng-container>

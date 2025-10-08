@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Task, TaskStatus } from 'src/app/types/task';
+import { ActivatedRoute } from '@angular/router';
+import { TaskService } from 'src/app/services/taskService';
 
 @Component({
   selector: 'app-kanban-board',
@@ -10,22 +12,34 @@ import { Task, TaskStatus } from 'src/app/types/task';
   templateUrl: './kanban-board.html',
   styleUrls: ['./kanban-board.css'],
 })
-export class KanbanBoard {
+export class KanbanBoard implements OnInit {
   @Input() projectId!: number;
-  taskStatus = ['TO DO', 'IN PROGRESS', 'IN REVIEW', 'DONE'];
-  tasks: Task[] = [
-    { id: 1, title: 'Design Layout', status: 'TO DO', description: 'random', assignee: 'AK' },
-    { id: 2, title: 'Assign tasks', status: 'TO DO', description: 'random2', assignee: 'Kaustubh' },
-    { id: 3, title: 'Meeting', status: 'TO DO', description: 'random3', assignee: 'Gaikwad' },
-    {
-      id: 4,
-      title: 'Kanban Board',
-      status: 'TO DO',
-      description: 'Develop Kanban board UI',
-      assignee: 'mahesh',
-    },
-  ];
+  taskStatus = ['TO_DO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
+  tasks: Task[] = [];
+  
+  constructor(private route: ActivatedRoute, private taskService : TaskService) {}
+ 
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (!isNaN(id) && id > 0) {      
+        this.projectId = id;
+        this.loadTasks();
+      }
+    });
+  }
 
+  loadTasks(): void {
+    this.taskService.getTasksByProjectId(this.projectId).subscribe({
+      next: (tasks) => {
+        this.tasks = tasks;
+      },
+      error: (err) => {
+        console.error('Error loading tasks:', err);
+      },
+    });
+  }
+  
   draggingTaskId: number | null = null;
   dragOverStatus: string | null = null;
   dragOverTaskId: number | null = null;
@@ -34,8 +48,8 @@ export class KanbanBoard {
 
   showModal: boolean = false;
   selectedTask: Task | null = null;
-  isManagerOrAdmin: boolean = true; // Hardcoded for testing; replace with auth service
-
+  isManagerOrAdmin: boolean = true; 
+  
   getTasksByStatus(status: string) {
     return this.tasks.filter((t) => t.status === status);
   }
@@ -134,7 +148,7 @@ export class KanbanBoard {
   }
 
   openModal(task: Task) {
-    this.selectedTask = { ...task }; // Create a copy to avoid direct mutation
+    this.selectedTask = { ...task };
     this.showModal = true;
   }
 
@@ -166,5 +180,21 @@ export class KanbanBoard {
       }
       this.closeModal();
     }
+  }
+
+  getColumnGradient(index: number): string {
+    const classes = ['bg-gradient-to-t from-blue-800 via-indigo-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(79,70,229,0.45)] hover:ring-4 hover:ring-indigo-500/40',
+      'bg-gradient-to-t from-blue-700 via-sky-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(14,165,233,0.4)] hover:ring-4 hover:ring-sky-400/35',
+      'bg-gradient-to-t from-cyan-700 via-teal-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(20,184,166,0.38)] hover:ring-4 hover:ring-teal-400/35',
+      'bg-gradient-to-t from-indigo-700 via-purple-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(168,85,247,0.36)] hover:ring-4 hover:ring-purple-400/30'];
+    return classes[index] || classes[0];
+  }
+  
+  getGlowBarClass(index: number): string {
+    const glowClasses = ['bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 shadow-[0_0_20px_4px_rgba(99,102,241,0.6)]',
+      'bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-500 shadow-[0_0_20px_4px_rgba(56,189,248,0.6)]',
+      'bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-400 shadow-[0_0_20px_4px_rgba(45,212,191,0.6)]',
+      'bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-600 shadow-[0_0_20px_4px_rgba(147,51,234,0.6)]'];
+    return glowClasses[index] || glowClasses[0];
   }
 }

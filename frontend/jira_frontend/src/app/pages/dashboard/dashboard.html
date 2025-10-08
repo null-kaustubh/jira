@@ -127,18 +127,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- <div>
-          <label class="block mb-1.5 text-sm font-medium text-neutral-300"
-            >Manager ID</label
-          >
-          <input
-            type="number"
-            class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"
-            [(ngModel)]="newProject.managerId"
-            name="managerId"
-            required
-          />
-        </div> -->
               <div>
                 <label class="block mb-1.5 text-sm font-medium text-neutral-300">Status</label>
                 <select
@@ -273,9 +261,9 @@
             <ng-container *ngIf="projects.length > 0; else noProjects">
               <a
                 *ngFor="let project of projects"
-                [routerLink]="['/projects', project.projectId, 'summary']"
+                [routerLink]="['/projects', project.projectId]"
                 routerLinkActive="is-active"
-                [routerLinkActiveOptions]="{ exact: true }"
+                [routerLinkActiveOptions]="{ exact: false }"
                 #rla="routerLinkActive"
                 class="group relative flex items-center rounded-md px-3 py-2 text-sm transition-colors"
                 [ngClass]="{

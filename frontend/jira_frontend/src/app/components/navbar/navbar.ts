@@ -12,11 +12,8 @@ export class Navbar {
   @Input() projectName: string | null = '';
 
   ngOnInit() {
-    console.log('Navbar received projectId:', this.projectId);
-    console.log('Navbar received projectName:', this.projectName);
   }
 
   ngOnChanges(changes: any) {
-    console.log('Navbar changes:', changes);
   }
 }

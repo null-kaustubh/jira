@@ -28,7 +28,7 @@ export const routes: Routes = [
           {
             path: '',
             pathMatch: 'full',
-            redirectTo: 'summary', // default redirect to summary
+            redirectTo: 'summary',
           },
           {
             path: 'summary',
