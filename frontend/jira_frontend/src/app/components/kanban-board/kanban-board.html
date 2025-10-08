@@ -50,6 +50,7 @@
           (dragstart)="onDragStart($event, task)"
           (dragend)="onDragEnd($event)"
           (dragover)="onDragOver($event, status, task.id)"
+          (click)="openModal(task)"
           [class.done-splash]="status === 'DONE' && recentlyCompleted.has(task.id)"
         >
           <div class="flex flex-col gap-2">
@@ -79,3 +80,68 @@
     }
   </div>
 </div>
+
+@if (showModal && selectedTask) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header" [ngClass]="getStatusClass(selectedTask.status)">
+        <input
+          *ngIf="isManagerOrAdmin"
+          [(ngModel)]="selectedTask.title"
+          class="modal-title"
+          placeholder="Task Title"
+        />
+        <h2 *ngIf="!isManagerOrAdmin" class="modal-title">{{ selectedTask.title }}</h2>
+      </div>
+      <div class="modal-body">
+        <div class="field-group">
+          <label><strong>Description:</strong></label>
+          <textarea
+            *ngIf="isManagerOrAdmin"
+            [(ngModel)]="selectedTask.description"
+            class="modal-input"
+            placeholder="Task Description"
+            rows="1"
+          ></textarea>
+          <p *ngIf="!isManagerOrAdmin">{{ selectedTask.description }}</p>
+        </div>
+        <div class="field-group">
+          <label><strong>Assignee:</strong></label>
+          <input
+            *ngIf="isManagerOrAdmin"
+            [(ngModel)]="selectedTask.assignee"
+            class="modal-input"
+            placeholder="Assignee"
+          />
+          <p *ngIf="!isManagerOrAdmin">{{ selectedTask.assignee }}</p>
+        </div>
+        <div class="field-group">
+          <label><strong>Status:</strong></label>
+          <select
+            *ngIf="isManagerOrAdmin"
+            [(ngModel)]="selectedTask.status"
+            class="modal-input"
+          >
+            @for (status of taskStatus; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+          <p *ngIf="!isManagerOrAdmin">{{ selectedTask.status }}</p>
+        </div>
+        <div class="field-group comment-section">
+          <label><strong>Comments:</strong></label>
+          <textarea
+            class="modal-input"
+            placeholder="Comment functionality to be implemented later"
+            disabled
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="isManagerOrAdmin" class="save-button" (click)="saveTask()">Save</button>
+        <button class="close-button" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+}
