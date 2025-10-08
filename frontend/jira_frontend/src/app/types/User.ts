@@ -1,7 +1,9 @@
-export interface User {
-    user_id?: number;
+export interface NewUser {
     username?: string;
     password?: string;
     email?: string;
     role?: string;
+}
+export interface User extends NewUser{
+    id :number;
 }

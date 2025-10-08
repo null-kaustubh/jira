@@ -25,7 +25,9 @@ export class UsersComponent implements OnInit {
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (data) => {
-        this.users = data.users.length ? data.users as User[] : [];
+        this.users = data.users.length ? data.users : [];
+        console.log(this.users);
+        
         this.isLoading = false;
       },
       error: (err) => {
@@ -39,13 +41,11 @@ export class UsersComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
-  // The type of 'id' is now correctly 'string'
   handleDeleteUser(id: string): void {
     if (confirm('Are you sure you want to delete this user?')) {
       this.userService.deleteUser(id).subscribe({
         next: () => {
-          // This comparison is now valid (string === string)
-          this.users = this.users.filter(user => user.id !== id);
+          this.users = this.users.filter(user => user.user_id !== id);
         },
         error: (err) => {
           console.error('Failed to delete user', err);

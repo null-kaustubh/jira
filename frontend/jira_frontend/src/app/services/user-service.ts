@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User } from 'src/app/types/User';
+import { User } from './AuthService/authInterface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class UserService {
   
   constructor(private http: HttpClient) {}
 
-  loginUser(user: User ): Observable<{token : string, message : string}> {
+  loginUser(user: { email: string, password: string } ): Observable<{token : string, message : string}> {
     return this.http.post<{token : string, message : string}>(this.apiUrl+'/login', user );
   }
 
