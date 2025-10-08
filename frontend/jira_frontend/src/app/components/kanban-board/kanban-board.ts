@@ -103,13 +103,16 @@ export class KanbanBoard {
 
     this.tasks.splice(insertAt, 0, draggedTask);
 
-    if (status === 'DONE' && prevStatus !== 'DONE') {
+    if ((status === 'DONE' && prevStatus !== 'DONE') ||
+        (status === 'TO DO' && prevStatus !== 'TO DO') ||
+        (status === 'IN REVIEW' && prevStatus !== 'IN REVIEW')||
+        (status === 'IN PROGRESS' && prevStatus !== 'IN PROGRESS')) {
       this.recentlyCompleted.add(draggedTask.id);
       setTimeout(() => {
         this.recentlyCompleted.delete(draggedTask.id);
       }, 900);
     }
-
+    
     this.clearDragState();
   }
 

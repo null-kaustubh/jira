@@ -51,7 +51,11 @@
           (dragend)="onDragEnd($event)"
           (dragover)="onDragOver($event, status, task.id)"
           (click)="openModal(task)"
-          [class.done-splash]="status === 'DONE' && recentlyCompleted.has(task.id)"
+          [class.done-splash1]="status === 'DONE' && recentlyCompleted.has(task.id)"
+          [class.done-splash2]="status === 'IN REVIEW' && recentlyCompleted.has(task.id)"
+          [class.done-splash3]="status === 'IN PROGRESS' && recentlyCompleted.has(task.id)"
+          [class.done-splash4]="status === 'TO DO' && recentlyCompleted.has(task.id)"
+
         >
           <div class="flex flex-col gap-2">
             <h4>{{ task.title }}</h4>
