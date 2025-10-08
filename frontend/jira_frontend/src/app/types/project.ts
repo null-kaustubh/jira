@@ -1,5 +1,4 @@
-import { User } from "./User";
-
+import { User } from "./authInterface";
 
 export interface Project {
   name: string;
@@ -14,6 +13,7 @@ export interface ProjectFull {
   createdBy: string;
   manager: User;
   status: string;
+  employees? : User[]
 }
 
 export interface UpdateProject {
@@ -21,4 +21,5 @@ export interface UpdateProject {
   description?: string;
   manager: User;
   status: string;
+  employeeIds? : number[]; 
 }

@@ -1,3 +1,102 @@
+<div class="flex justify-end mt-2">
+  <button (click)="openCreateTaskModal()" class="flex items-center ml-3 gap-2 px-4 py-2 text-sm font-semibold bg-sky-600 text-white rounded-lg hover:bg-sky-500 transform hover:-translate-y-0.5 transition-all duration-200 shadow-md hover:shadow-sky-500/30">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    Create New Task
+  </button>
+</div>
+
+<div
+        *ngIf="isCreateTaskModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-out"
+        [ngClass]="{
+          'opacity-100': isCreateTaskModalOpen,
+          'opacity-0': !isCreateTaskModalOpen
+        }"
+      >
+        <div
+          (click)="closeCreateTaskModal()"
+          class="absolute inset-0 bg-slate-900/80 backdrop-blur-[0px]"
+        ></div>
+
+        <div
+          class="relative bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg p-6 mx-4 transition-all transform duration-300 ease-out"
+          [ngClass]="{
+            'scale-100 opacity-100': isCreateTaskModalOpen,
+            'scale-95 opacity-0': !isCreateTaskModalOpen
+          }"
+        >
+          <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-700">
+            <h2 class="text-xl font-bold text-neutral-100">Create a New Task</h2>
+            <button
+              type="button"
+              (click)="closeCreateTaskModal()"
+              class="p-2 -mr-2 rounded-full text-neutral-400 hover:bg-slate-700 hover:text-white transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <form (ngSubmit)="submitCreateTask()" #taskForm="ngForm" class="space-y-5">
+            <div>
+              <label class="block mb-1.5 text-sm font-medium text-neutral-300">Title</label>
+              <input type="text" [(ngModel)]="newTask.title" name="title" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200" required />
+            </div>
+      
+            <div>
+              <label class="block mb-1.5 text-sm font-medium text-neutral-300">Description</label>
+              <textarea [(ngModel)]="newTask.description" name="description" rows="3" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"></textarea>
+            </div>
+      
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-1.5 text-sm font-medium text-neutral-300">Assignee</label>
+                <select [(ngModel)]="newTask.assignee.user_id" name="assignee" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200" required>
+                  <option [ngValue]="null" disabled>Select an employee</option>
+                  <option *ngFor="let emp of employees" [ngValue]="emp.user_id">{{ emp.username || emp.email }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block mb-1.5 text-sm font-medium text-neutral-300">Priority</label>
+                <select [(ngModel)]="newTask.priority" name="priority" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200">
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                </select>
+              </div>
+            </div>
+             <div>
+                <label class="block mb-1.5 text-sm font-medium text-neutral-300">Type</label>
+                <select [(ngModel)]="newTask.type" name="type" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200">
+                  <option value="BUG">Bug</option>
+                  <option value="FEATURE">Feature</option>
+                  <option value="REFACTOR">Refactor</option>
+                  <option value="TESTING">Testing</option>
+                </select>
+              </div>
+      
+            <div class="flex justify-end space-x-3 pt-4">
+              <button type="button" (click)="closeCreateTaskModal()" class="px-5 py-2.5 bg-transparent border border-neutral-600 text-neutral-300 hover:bg-neutral-700 hover:text-white font-semibold rounded-lg transition-colors duration-200">Cancel</button>
+              <button type="submit" [disabled]="taskForm.invalid" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:shadow-sky-500/30 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">Create Task</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
 <div class="w-full overflow-hidden">
   <div class="flex justify-evenly gap-6 px-4 py-5">
     <ng-container *ngFor="let status of taskStatus; let i = index">

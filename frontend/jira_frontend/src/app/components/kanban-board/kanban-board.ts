@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Task, TaskStatus } from 'src/app/types/task';
-import { ActivatedRoute } from '@angular/router';
+import { CreateTaskPayload, Task, TaskStatus } from 'src/app/types/task';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { TaskService } from 'src/app/services/taskService';
+import { LucideAngularModule } from 'lucide-angular';
+import { User } from 'src/app/types/authInterface';
+import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './kanban-board.html',
   styleUrls: ['./kanban-board.css'],
 })
@@ -17,7 +20,7 @@ export class KanbanBoard implements OnInit {
   taskStatus = ['TO_DO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   tasks: Task[] = [];
   
-  constructor(private route: ActivatedRoute, private taskService : TaskService) {}
+  constructor(private route: ActivatedRoute, private taskService : TaskService,private userService: UserService) {}
  
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -25,6 +28,7 @@ export class KanbanBoard implements OnInit {
       if (!isNaN(id) && id > 0) {      
         this.projectId = id;
         this.loadTasks();
+        this.loadEmployees();
       }
     });
   }
@@ -123,9 +127,9 @@ export class KanbanBoard implements OnInit {
     this.tasks.splice(insertAt, 0, draggedTask);
 
     if ((status === 'DONE' && prevStatus !== 'DONE') ||
-        (status === 'TO DO' && prevStatus !== 'TO DO') ||
-        (status === 'IN REVIEW' && prevStatus !== 'IN REVIEW')||
-        (status === 'IN PROGRESS' && prevStatus !== 'IN PROGRESS')) {
+        (status === 'TO DO' && prevStatus !== 'TO_DO') ||
+        (status === 'IN REVIEW' && prevStatus !== 'IN_REVIEW')||
+        (status === 'IN PROGRESS' && prevStatus !== 'IN_PROGRESS')) {
       this.recentlyCompleted.add(draggedTask.id);
       setTimeout(() => {
         this.recentlyCompleted.delete(draggedTask.id);
@@ -196,5 +200,60 @@ export class KanbanBoard implements OnInit {
       'bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-400 shadow-[0_0_20px_4px_rgba(45,212,191,0.6)]',
       'bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-600 shadow-[0_0_20px_4px_rgba(147,51,234,0.6)]'];
     return glowClasses[index] || glowClasses[0];
+  }
+
+  isCreateTaskModalOpen = false;
+  employees: User[] = [];
+
+  newTask: CreateTaskPayload = {
+    title: '',
+    description: '',
+    type: 'FEATURE', 
+    priority: 'MEDIUM',
+    assignee: { user_id: null },
+  };
+
+  loadEmployees() {
+    this.userService.getAllUsers().subscribe(response => {
+      this.employees = response.users.filter(user => user.role === 'EMPLOYEE');
+    });
+  }
+
+  openCreateTaskModal() {
+    this.isCreateTaskModalOpen = true;
+  }
+
+  closeCreateTaskModal() {
+    this.isCreateTaskModalOpen = false;
+    this.newTask = {
+      title: '',
+      description: '',
+      type: 'FEATURE',
+      priority: 'MEDIUM',
+      assignee: { user_id: null },
+    };
+  }
+
+  submitCreateTask() {
+    if (!this.projectId) {
+      console.error('Project ID is missing');
+      return;
+    }
+    if (!this.newTask.assignee.user_id) {
+        alert('Please assign the task to an employee.');
+        return;
+    }
+
+    this.taskService.createTask(this.projectId, this.newTask).subscribe({
+      next: (createdTask) => {
+        console.log('Task created successfully!', createdTask);
+        this.closeCreateTaskModal();
+        this.loadTasks();
+      },
+      error: (err) => {
+        console.error('Failed to create task', err);
+        alert('Error: Could not create the task.');
+      },
+    });
   }
 }

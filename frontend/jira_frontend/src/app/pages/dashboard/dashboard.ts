@@ -9,7 +9,7 @@ import {
   NavigationEnd,
 } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
-import { ProjectFull } from 'src/app/types/project';
+import { Project, ProjectFull, UpdateProject } from 'src/app/types/project';
 import { ProjectService } from 'src/app/services/project-service';
 import { JwtService } from 'src/app/services/jwtService';
 import { FormsModule } from '@angular/forms';
@@ -47,6 +47,9 @@ export class MainLayoutComponent {
   showEmployeeDropdown = false;
   showNavbar = false;
   projectName: string = '';
+
+  isEditProjectModalOpen = false;
+  editingProject: ProjectFull | null = null; 
 
   menuRefs: Record<number, any> = {};
 
@@ -191,9 +194,53 @@ export class MainLayoutComponent {
     });
   }
 
+  openEditProjectModal(project: ProjectFull) {
+    this.editingProject = { ...project }; 
+    this.selectedEmployeeIds = project.employees?.map((emp: any) => emp.user_id) || [];
+    this.isEditProjectModalOpen = true;
+  }
+
+  closeEditProjectModal() {
+    this.isEditProjectModalOpen = false;
+    this.editingProject = null;
+    this.selectedEmployeeIds = [];
+  }
+
+  submitEditProject() {
+    if (!this.editingProject) return;
+
+    const payload : UpdateProject = {
+      name: this.editingProject.name,
+      description: this.editingProject.description,
+      employeeIds: this.selectedEmployeeIds,
+      status: this.editingProject.status,
+      manager : this.editingProject.manager
+    };
+
+    this.projectService.updateProject(payload, this.editingProject.projectId).subscribe({
+      next: () => {
+        this.getAllProjects();
+        this.closeEditProjectModal();
+      },
+      error: (err) => alert('Failed to update project'),
+    });
+  }
+
   createProject() {}
 
   editProject(projectId: number) {}
 
-  deleteProject(projectId: number) {}
+  deleteProject(projectId: number) {
+    if (confirm('Are you sure you want to delete this project?')) {
+      this.projectService.deleteProject(projectId).subscribe({
+        next: () => {
+          this.getAllProjects(); 
+          if (this.projectId === projectId) {
+            this.router.navigate(['/']);
+          }
+        },
+        error: (err) => alert('Failed to delete project'),
+      });
+    }
+  }
 }

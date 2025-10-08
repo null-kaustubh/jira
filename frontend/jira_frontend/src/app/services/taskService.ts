@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { JwtService } from './jwtService';
-import { Task } from 'src/app/types/task'; 
+import { CreateTaskPayload, Task } from 'src/app/types/task'; 
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class TaskService {
     return this.http.get<Task>(`${this.apiUrl}/${projectId}/tasks/${taskId}`);
   }
 
-  createTask(projectId: number, task: Task): Observable<Task> {
+  createTask(projectId: number, task: CreateTaskPayload): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/${projectId}/tasks`, task, );
   }
 
