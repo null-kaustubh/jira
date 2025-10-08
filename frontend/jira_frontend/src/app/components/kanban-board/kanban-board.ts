@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Task, TaskStatus } from 'src/app/types/task';
 import { Navbar } from '../navbar/navbar';
 
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [CommonModule, Navbar],
+  imports: [CommonModule, FormsModule, Navbar],
   templateUrl: './kanban-board.html',
-  styleUrl: './kanban-board.css',
+  styleUrls: ['./kanban-board.css'],
 })
 export class KanbanBoard {
   @Input() projectId!: number;
@@ -17,14 +18,18 @@ export class KanbanBoard {
     { id: 1, title: 'Design Layout', status: 'TO DO', description: 'random', assignee: 'AK' },
     { id: 2, title: 'Assign tasks', status: 'TO DO', description: 'random2', assignee: 'Kaustubh' },
     { id: 3, title: 'Meeting', status: 'TO DO', description: 'random3', assignee: 'Gaikwad' },
-    { id: 4, title: 'Kanban Board', status: 'TO DO', description: 'random4', assignee: 'Kaustubh' },
+    { id: 4, title: 'Kanban Board', status: 'TO DO', description: 'Develop Kanban board UI', assignee: 'mahesh' },
   ];
 
   draggingTaskId: number | null = null;
   dragOverStatus: string | null = null;
-  dragOverTaskId: number | null = null; // Changed: store task ID
-  dragOverPosition: 'before' | 'after' | 'end' = 'end'; // Changed: store position relative to task
-  recentlyCompleted = new Set<number>(); // track tasks that just moved to DONE to trigger CSS animation
+  dragOverTaskId: number | null = null;
+  dragOverPosition: 'before' | 'after' | 'end' = 'end';
+  recentlyCompleted = new Set<number>();
+
+  showModal: boolean = false;
+  selectedTask: Task | null = null;
+  isManagerOrAdmin: boolean = true; // Hardcoded for testing; replace with auth service
 
   getTasksByStatus(status: string) {
     return this.tasks.filter((t) => t.status === status);
@@ -102,7 +107,7 @@ export class KanbanBoard {
       this.recentlyCompleted.add(draggedTask.id);
       setTimeout(() => {
         this.recentlyCompleted.delete(draggedTask.id);
-      }, 900); // matches CSS animation duration
+      }, 900);
     }
 
     this.clearDragState();
@@ -118,5 +123,40 @@ export class KanbanBoard {
     this.dragOverStatus = null;
     this.dragOverTaskId = null;
     this.dragOverPosition = 'end';
+  }
+
+  openModal(task: Task) {
+    this.selectedTask = { ...task }; // Create a copy to avoid direct mutation
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.selectedTask = null;
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'TO DO':
+        return 'status-todo';
+      case 'IN PROGRESS':
+        return 'status-in-progress';
+      case 'IN REVIEW':
+        return 'status-in-review';
+      case 'DONE':
+        return 'status-done';
+      default:
+        return '';
+    }
+  }
+
+  saveTask() {
+    if (this.selectedTask) {
+      const index = this.tasks.findIndex(t => t.id === this.selectedTask!.id);
+      if (index !== -1) {
+        this.tasks[index] = { ...this.selectedTask };
+      }
+      this.closeModal();
+    }
   }
 }
