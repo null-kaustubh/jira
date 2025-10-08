@@ -18,6 +18,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { User } from 'src/app/services/AuthService/authInterface';
 import { Navbar } from 'src/app/components/navbar/navbar';
 import { filter } from 'rxjs';
+import { ZardDropdownModule } from '@shared/components/dropdown/dropdown.module';
+import { ZardButtonComponent } from '@shared/components/button/button.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -31,6 +33,8 @@ import { filter } from 'rxjs';
     FormsModule,
     NgSelectModule,
     Navbar,
+    ZardDropdownModule,
+    ZardButtonComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -43,6 +47,8 @@ export class MainLayoutComponent {
   showEmployeeDropdown = false;
   showNavbar = false;
   projectName: string = '';
+
+  menuRefs: Record<number, any> = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -138,8 +144,6 @@ export class MainLayoutComponent {
     console.log('Logout clicked');
   }
 
-  createProject() {}
-
   isCreateProjectModalOpen = false;
 
   newProject: any = {
@@ -187,4 +191,10 @@ export class MainLayoutComponent {
       },
     });
   }
+
+  createProject() {}
+
+  editProject(projectId: number) {}
+
+  deleteProject(projectId: number) {}
 }
