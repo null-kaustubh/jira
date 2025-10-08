@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 // Ensure this User import is from the correct file
 import { User } from 'src/app/services/AuthService/authInterface';
+import { JwtService } from 'src/app/services/JWT/jwtService';
 import { UserService } from 'src/app/services/user-service';
 
 @Component({
@@ -14,11 +15,13 @@ import { UserService } from 'src/app/services/user-service';
 export class UsersComponent implements OnInit {
   users: User[] = [];
   isLoading = true;
+  role : string | null = null;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router, private jwtService : JwtService) {}
 
   ngOnInit(): void {
-    this.loadUsers();
+    this.role = this.jwtService.getUserRole();
+    if( "ADMIN".toUpperCase() === this.role) this.loadUsers();
   }
 
   loadUsers(): void {
