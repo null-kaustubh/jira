@@ -39,6 +39,10 @@ public class UserController {
     			if (!jwtUtil.validateToken(token)) {
                     return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
              }
+    			String role = jwtUtil.extractRole(token);
+    			if(!"ADMIN".equalsIgnoreCase(role)) {
+    				return ResponseEntity.status(403).body(java.util.Map.of("error", "Unauthorized."));    				
+    			}
     			List<User> users = userService.findAllUsers();
     			
     			return ResponseEntity.ok().body(java.util.Map.of("users", users));

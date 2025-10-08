@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.entity.User;
+import com.example.security.JwtUtil;
 import com.example.service.ProjectService;
 import com.example.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,21 @@ public class ProjectController {
 
     private ProjectService projectService;
     private UserService userService;
+    private JwtUtil jwtUtil;
 
-    public ProjectController(ProjectService projectService, UserService userService) {
+    public ProjectController(ProjectService projectService, UserService userService, JwtUtil jwtUtil) {
 		this.projectService = projectService;
 		this.userService = userService;
+		this.jwtUtil = jwtUtil;
 	}
 
 	@GetMapping
     public ResponseEntity<?> getAllProjects(@RequestHeader("Authorization") String token) {
-        try{
+		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+		try{
             User currentUser = userService.getUserFromToken(token);
             return ResponseEntity.ok(projectService.getAllProjects(currentUser));
         }catch (Exception e) {
@@ -33,7 +40,11 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        try{
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
             User currentUser = userService.getUserFromToken(token);
             return ResponseEntity.ok(projectService.getProjectById(id, currentUser));
         }catch (Exception e) {
@@ -43,9 +54,13 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<?> createProject(@RequestBody Map<String, Object> request,@RequestHeader("Authorization") String token) {
-        try{
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}		
+    		try{
             User currentUser = userService.getUserFromToken(token);
-            if (!"ADMIN".equals(currentUser.getRole())) {
+            if ( !"MANAGER".equals(currentUser.getRole()) ) {
                 return ResponseEntity.status(403).body("Access Denied: Only Admin can create projects");
             }
             return ResponseEntity.ok(projectService.createProject(request, currentUser));
@@ -57,7 +72,11 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProject(@PathVariable Long id,@RequestBody Map<String, Object> request,@RequestHeader("Authorization") String token) {
-        try{
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
             User currentUser = userService.getUserFromToken(token);
             return ResponseEntity.ok(projectService.updateProject(id, request, currentUser));
         }catch (Exception e) {
@@ -68,7 +87,11 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProject(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        try{
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
             User currentUser = userService.getUserFromToken(token);
             if (!"ADMIN".equals(currentUser.getRole())) {
                 return ResponseEntity.status(403).body("Access Denied: Only Admin can delete projects");
