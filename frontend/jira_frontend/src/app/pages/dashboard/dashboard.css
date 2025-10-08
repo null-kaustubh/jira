@@ -2,3 +2,13 @@
 a {
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
+
+::ng-deep z-dropdown-menu-item:hover {
+  background-color: rgb(15 23 42) !important; /* slate-900 */
+}
+
+::ng-deep z-dropdown-menu-item:focus,
+::ng-deep z-dropdown-menu-item:focus-visible {
+  outline: none;
+  background-color: transparent;
+}
