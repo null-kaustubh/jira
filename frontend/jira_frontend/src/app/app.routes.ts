@@ -39,11 +39,6 @@ export const routes: Routes = [
               import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard),
           },
           {
-            path: 'forms',
-            loadComponent: () =>
-              import('./pages/project-forms/project-forms').then((m) => m.ProjectForms),
-          },
-          {
             path: 'list',
             loadComponent: () =>
               import('./pages/project-list/project-list').then((m) => m.ProjectList),
