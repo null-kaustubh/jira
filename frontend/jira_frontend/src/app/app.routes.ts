@@ -9,6 +9,7 @@ export const routes: Routes = [
   },
   {
     path: 'register',
+    canActivate: [AuthGuard], // ✅ Add this line
     loadComponent: () => import('./pages/register/register').then((m) => m.Register),
   },
   {
