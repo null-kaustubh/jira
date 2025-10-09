@@ -1,75 +1,106 @@
 package com.example.controller;
 
-import com.example.model.entity.Project;
+import com.example.model.entity.User;
+import com.example.security.JwtUtil;
 import com.example.service.ProjectService;
-
+import com.example.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/projects")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProjectController {
 
-    private final ProjectService projectService;
+    private ProjectService projectService;
+    private UserService userService;
+    private JwtUtil jwtUtil;
 
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
-
-    @GetMapping
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        return projectService.getProjectById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-	@PostMapping
-	public ResponseEntity<Project> createProject(@RequestBody Project project,
-			@RequestHeader("JWTAuthorization") String authHeader) {
-		try {
-			String token = authHeader.replace("Bearer ", "");
-			Project createdProject = projectService.createProject(project, token);
-			return ResponseEntity.ok(createdProject);
-		} catch (SecurityException e) {
-			return ResponseEntity.status(403).body(null);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(null);
-		}
+    public ProjectController(ProjectService projectService, UserService userService, JwtUtil jwtUtil) {
+		this.projectService = projectService;
+		this.userService = userService;
+		this.jwtUtil = jwtUtil;
 	}
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
-        return projectService.updateProject(id, updatedProject)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        boolean deleted = projectService.deleteProject(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+	@GetMapping
+    public ResponseEntity<?> getAllProjects(@RequestHeader("Authorization") String token) {
+		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+		try{
+            User currentUser = userService.getUserFromToken(token);
+            return ResponseEntity.ok(projectService.getAllProjects(currentUser));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", e.getMessage()));
         }
     }
 
-    // ✅ New endpoint to get project status
-    @GetMapping("/{id}/status")
-    public ResponseEntity<String> getProjectStatus(@PathVariable Long id) {
-        String status = projectService.getProjectStatus(id);
-        if (status != null) {
-            return ResponseEntity.ok(status);
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProjectById(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
+            User currentUser = userService.getUserFromToken(token);
+            return ResponseEntity.ok(projectService.getProjectById(id, currentUser));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createProject(@RequestBody Map<String, Object> request,@RequestHeader("Authorization") String token) {
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}		
+    		try{
+            User currentUser = userService.getUserFromToken(token);
+            if ( !"MANAGER".equals(currentUser.getRole()) ) {
+                return ResponseEntity.status(403).body("Access Denied: Only Admin can create projects");
+            }
+            return ResponseEntity.ok(projectService.createProject(request, currentUser));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProject(@PathVariable Long id,@RequestBody Map<String, Object> request,@RequestHeader("Authorization") String token) {
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
+            User currentUser = userService.getUserFromToken(token);
+            return ResponseEntity.ok(projectService.updateProject(id, request, currentUser));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProject(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    		token = token.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
+		}
+    		try{
+            User currentUser = userService.getUserFromToken(token);
+            if (!"ADMIN".equals(currentUser.getRole())) {
+                return ResponseEntity.status(403).body("Access Denied: Only Admin can delete projects");
+            }
+            projectService.deleteProject(id);
+            return ResponseEntity.ok("Project deleted successfully");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", e.getMessage()));
         }
     }
 }

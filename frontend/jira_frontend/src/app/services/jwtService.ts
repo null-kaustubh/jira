@@ -2,17 +2,18 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 
 interface DecodedToken {
-  sub: string; 
+  sub: string;
   role: string;
+  id: number;
   iat: number;
   exp: number;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JwtService {
-  constructor() { }
+  constructor() {}
 
   decodeToken(): DecodedToken | null {
     const token = localStorage.getItem('token');
@@ -21,7 +22,7 @@ export class JwtService {
         const decodedToken: DecodedToken = jwtDecode(token);
         return decodedToken;
       } catch (error) {
-        console.error("Failed to decode token:", error);
+        console.error('Failed to decode token:', error);
         return null;
       }
     }
@@ -36,5 +37,11 @@ export class JwtService {
   getUserEmail(): string | null {
     const decodedToken = this.decodeToken();
     return decodedToken ? decodedToken.sub : null;
+  }
+
+  getUserId(): number | null {
+    const decodedToken = this.decodeToken();
+    console.log(decodedToken);
+    return decodedToken ? decodedToken.id : null;
   }
 }

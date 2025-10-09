@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// Ensure this User import is from the correct file
-import { User } from 'src/app/services/AuthService/authInterface';
+import { User } from 'src/app/types/authInterface';
+import { JwtService } from 'src/app/services/jwtService';
 import { UserService } from 'src/app/services/user-service';
 
 @Component({
@@ -14,18 +14,24 @@ import { UserService } from 'src/app/services/user-service';
 export class UsersComponent implements OnInit {
   users: User[] = [];
   isLoading = true;
+  role: string | null = null;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private jwtService: JwtService
+  ) {}
 
   ngOnInit(): void {
-    this.loadUsers();
+    this.role = this.jwtService.getUserRole();
+    if ('ADMIN'.toUpperCase() === this.role) this.loadUsers();
   }
 
   loadUsers(): void {
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (data) => {
-        this.users = data.users.length ? data.users as User[] : [];
+        this.users = data.users.length ? data.users : [];
         this.isLoading = false;
       },
       error: (err) => {
@@ -39,13 +45,11 @@ export class UsersComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
-  // The type of 'id' is now correctly 'string'
-  handleDeleteUser(id: string): void {
+  handleDeleteUser(id: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
       this.userService.deleteUser(id).subscribe({
         next: () => {
-          // This comparison is now valid (string === string)
-          this.users = this.users.filter(user => user.id !== id);
+          this.users = this.users.filter((user) => user.user_id !== id);
         },
         error: (err) => {
           console.error('Failed to delete user', err);

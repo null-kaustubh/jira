@@ -1,5 +1,7 @@
 package com.example.model.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +30,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role;
 
+    @ManyToMany(mappedBy = "employees")
+    private Set<Project> projects = new HashSet<>();
+    
     public User() {
     }
 

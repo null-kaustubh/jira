@@ -10,28 +10,49 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./pages/register/register').then((m) => m.Register),
   },
-
-  // Parent route that uses the layout for all its children
   {
-    path: '', // This will now handle routes like '/dashboard', '/users'
+    path: '',
     component: MainLayoutComponent,
-    // canActivate: [AuthGuard], // You can add a guard here later
     children: [
       {
-        path: 'dashboard',
+        path: '',
         loadComponent: () => import('./pages/home/home').then((m) => m.HomeComponent),
       },
       {
         path: 'users',
         loadComponent: () => import('./pages/users/users.component').then((m) => m.UsersComponent),
       },
-      // ... add other child routes like 'projects' here
+      {
+        path: 'projects/:id',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'boards',
+          },
+          {
+            path: 'summary',
+            loadComponent: () =>
+              import('./pages/project-summary/project-summary').then((m) => m.ProjectSummary),
+          },
+          {
+            path: 'boards',
+            loadComponent: () =>
+              import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard),
+          },
+          {
+            path: 'forms',
+            loadComponent: () =>
+              import('./pages/project-forms/project-forms').then((m) => m.ProjectForms),
+          },
+          {
+            path: 'list',
+            loadComponent: () =>
+              import('./pages/project-list/project-list').then((m) => m.ProjectList),
+          },
+        ],
+      },
     ],
   },
-
-  // Redirect the root path to the login page
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-
-  // Wildcard route for any other URL
   { path: '**', redirectTo: '/login' },
 ];

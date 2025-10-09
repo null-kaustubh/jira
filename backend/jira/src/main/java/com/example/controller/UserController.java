@@ -33,12 +33,16 @@ public class UserController {
     }
     
     @GetMapping
-    public ResponseEntity<?> getAllUsers(@RequestHeader("JWTAuthorization") String authHeader){
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String authHeader){
     		try {
     			String token = authHeader.substring(7);
     			if (!jwtUtil.validateToken(token)) {
                     return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
              }
+    			String role = jwtUtil.extractRole(token);
+    			if(!"ADMIN".equalsIgnoreCase(role) && !"MANAGER".equalsIgnoreCase(role)) {
+    				return ResponseEntity.status(403).body(java.util.Map.of("error", "Unauthorized."));    				
+    			}
     			List<User> users = userService.findAllUsers();
     			
     			return ResponseEntity.ok().body(java.util.Map.of("users", users));
@@ -52,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             User registeredUser = userService.registerUser(user);
-            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole());
+            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole(), registeredUser.getUser_id());
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User registered successfully", "token", token));
         } catch (Exception e) {
@@ -66,7 +70,7 @@ public class UserController {
         try {
             User authenticatedUser = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
+            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole(), authenticatedUser.getUser_id());
 
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User logged in successfully", "token", token));
@@ -77,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> profile(@RequestHeader("JWTAuthorization") String authHeader) {
+    public ResponseEntity<?> profile(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
             if (!jwtUtil.validateToken(token)) {
@@ -97,7 +101,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(
-        @PathVariable Long id, @RequestBody User updates, @RequestHeader("JWTAuthorization") String authHeader
+        @PathVariable Long id, @RequestBody User updates, @RequestHeader("Authorization") String authHeader
     ) {
         if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));
@@ -125,7 +129,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(
-        @PathVariable Long id, @RequestHeader("JWTAuthorization") String authHeader
+        @PathVariable Long id, @RequestHeader("Authorization") String authHeader
     ) {
         if (!jwtUtil.isAuthenticated(authHeader)) {
             return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid or expired token"));

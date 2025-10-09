@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginUser, User } from './authInterface';
-import { JwtService } from '../JWT/jwtService';
+import { LoginUser, User } from '../types/authInterface';
+import { JwtService } from './jwtService';
+import { NewUser } from 'src/app/types/User';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class Auth {
     return this.http.get<User>(`${this.apiUrl}/profile`);
   }
 
-  registerUser(user: User): Observable<User> {
+  registerUser(user: NewUser): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 

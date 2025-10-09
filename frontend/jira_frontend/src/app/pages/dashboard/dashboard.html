@@ -1,102 +1,359 @@
 <div class="flex flex-col h-screen bg-slate-900 text-neutral-200">
-    <header class="flex items-center justify-between h-14 bg-[#1a202c] px-4 border-b border-neutral-700 flex-shrink-0">
-      <div class="flex items-center">
-        <button (click)="toggleSidebar()" class="p-2 rounded-full hover:bg-neutral-700/50 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  <header
+    class="flex items-center justify-between h-14 bg-[#1a202c] px-4 border-b border-neutral-700 flex-shrink-0"
+  >
+    <div class="flex items-center">
+      <button
+        (click)="toggleSidebar()"
+        class="p-2 rounded-full hover:bg-neutral-700/50 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <span
+        class="font-bold text-lg ml-3 bg-gradient-to-r from-sky-400 to-indigo-500 text-transparent bg-clip-text"
+      >
+        iTask
+      </span>
+    </div>
+
+    <div class="flex-1 flex justify-center px-4">
+      <input
+        type="text"
+        placeholder="Search"
+        class="w-full max-w-md bg-slate-800/60 px-4 py-1.5 text-sm text-neutral-200 placeholder:text-neutral-500 rounded-lg border border-neutral-700 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition"
+      />
+
+      <div *ngIf="userRole?.toUpperCase() === 'MANAGER'">
+        <button
+          class="flex items-center ml-3 gap-2 px-4 py-2 text-sm font-semibold bg-sky-600 text-white rounded-lg hover:bg-sky-500 transform hover:-translate-y-0.5 transition-all duration-200 shadow-md hover:shadow-sky-500/30"
+          (click)="openCreateProjectModal()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create New Project
         </button>
-        <span class="font-bold text-lg ml-3 bg-gradient-to-r from-sky-400 to-indigo-500 text-transparent bg-clip-text">
-          iTask
-        </span>
       </div>
-  
-      <div class="flex-1 flex justify-center px-4">
-        <input
-          type="text"
-          placeholder="Search"
-          class="w-full max-w-md bg-slate-800/60 px-4 py-1.5 text-sm text-neutral-200 placeholder:text-neutral-500 rounded-lg border border-neutral-700 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition"
-        />
-      </div>
-  
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-offset-2 ring-offset-slate-900 ring-sky-500">
-          {{ userInitial }}
+
+      <div
+        *ngIf="isCreateProjectModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-out"
+        [ngClass]="{
+          'opacity-100': isCreateProjectModalOpen,
+          'opacity-0': !isCreateProjectModalOpen
+        }"
+      >
+        <div
+          (click)="closeCreateProjectModal()"
+          class="absolute inset-0 bg-slate-900/80 backdrop-blur-[0px]"
+        ></div>
+
+        <div
+          class="relative bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg p-6 mx-4 transition-all transform duration-300 ease-out"
+          [ngClass]="{
+            'scale-100 opacity-100': isCreateProjectModalOpen,
+            'scale-95 opacity-0': !isCreateProjectModalOpen
+          }"
+        >
+          <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-700">
+            <h2 class="text-xl font-bold text-neutral-100">Create a New Project</h2>
+            <button
+              type="button"
+              (click)="closeCreateProjectModal()"
+              class="p-2 -mr-2 rounded-full text-neutral-400 hover:bg-slate-700 hover:text-white transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <form (ngSubmit)="submitCreateProject()" #projectForm="ngForm" class="space-y-5">
+            <div>
+              <label class="block mb-1.5 text-sm font-medium text-neutral-300">Project Name</label>
+              <input
+                type="text"
+                class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"
+                [(ngModel)]="newProject.name"
+                name="name"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1.5 text-sm font-medium text-neutral-300">Description</label>
+              <textarea
+                class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"
+                [(ngModel)]="newProject.description"
+                name="description"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block mb-1.5 text-sm font-medium text-neutral-300">Status</label>
+                <select
+                  class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"
+                  [(ngModel)]="newProject.status"
+                  name="status"
+                >
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="IN_PROGRESS">IN_PROGRESS</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="assignEmployees"
+                class="block mb-1.5 text-sm font-medium text-neutral-300"
+              >
+                Assign Employees
+              </label>
+
+              <div class="relative">
+                <button
+                  type="button"
+                  (click)="showEmployeeDropdown = !showEmployeeDropdown"
+                  class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600 text-neutral-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/40 outline-none transition-colors duration-200"
+                >
+                  {{
+                    selectedEmployeeIds.length
+                      ? selectedEmployeeIds.length + ' selected'
+                      : 'Select employees'
+                  }}
+                </button>
+
+                <div
+                  *ngIf="showEmployeeDropdown"
+                  class="absolute z-10 mt-2 w-full max-h-48 overflow-y-auto bg-slate-900 border border-slate-700 rounded-lg shadow-lg p-2 space-y-1"
+                >
+                  <div
+                    *ngFor="let emp of employees"
+                    class="flex items-center gap-2 hover:bg-slate-800/60 rounded px-2 py-1 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      [value]="emp.user_id"
+                      [checked]="selectedEmployeeIds.includes(emp.user_id)"
+                      (change)="toggleEmployeeSelection(emp.user_id!, $event)"
+                      class="accent-sky-500"
+                    />
+                    <label class="cursor-pointer text-sm select-none">
+                      {{ emp.username || emp.email }}
+                      <span class="text-neutral-400">(ID: {{ emp.user_id }})</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <p class="mt-1 text-sm text-neutral-400">
+                Selected: {{ selectedEmployeeIds.length }}
+              </p>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                class="px-5 py-2.5 bg-transparent border border-neutral-600 text-neutral-300 hover:bg-neutral-700 hover:text-white font-semibold rounded-lg transition-colors duration-200"
+                (click)="closeCreateProjectModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:shadow-sky-500/30 transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Create Project
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </header>
-  
-    <div class="flex flex-1 overflow-hidden">
-      <aside 
-        class="bg-[#1a202c] p-4 border-r border-neutral-700 flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden"
-        [class.w-64]="!isSidebarCollapsed"
-        [class.w-0]="isSidebarCollapsed"
-        [class.p-4]="!isSidebarCollapsed"
-        [class.p-0]="isSidebarCollapsed"
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <div
+        class="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-offset-2 ring-offset-slate-900 ring-sky-500"
       >
-        <nav class="space-y-2 whitespace-nowrap">
-          <a routerLink="/dashboard" routerLinkActive="bg-sky-500/20 text-sky-400" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors">Dashboard</a>
-          <a routerLink="/users" routerLinkActive="bg-sky-500/20 text-sky-400" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors">Users</a>
-          <div class="relative">
-            <button
-              (click)="toggleProjects()"
-              class="flex items-center justify-between w-full px-2 py-2 rounded hover:bg-neutral-700"
-            >
-              <span class="flex items-center gap-2">
-                <lucide-icon name="Folder" size="16"></lucide-icon>
-                Projects
-              </span>
-              <lucide-icon
-                [name]="projectsExpanded ? 'ChevronUp' : 'ChevronDown'"
-                size="16"
-              ></lucide-icon>
-            </button>
-            <div *ngIf="projectsExpanded" class="pl-6 mt-2 space-y-1">
-              <ng-container *ngIf="projects.length > 0; else noProjects">
-                <a
-                  *ngFor="let project of projects"
-                  [routerLink]="['/projects', project.id, 'dashboard']"
-                  routerLinkActive="is-active"
-                  [routerLinkActiveOptions]="{ exact: true }"
-                  #rla="routerLinkActive"
-                  class="group relative flex items-center rounded-md px-3 py-2 text-sm transition-colors"
-                  [ngClass]="{
-                    'text-sky-500 bg-sky-500/10 hover:bg-sky-500/15': rla.isActive,
-                    'text-neutral-300 hover:text-neutral-50 hover:bg-neutral-800/60': !rla.isActive
-                  }"
-                  [attr.aria-current]="rla.isActive ? 'page' : null"
-                >
-                  <span
-                    class="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r transition-opacity"
-                    [ngClass]="{
-                      'bg-sky-500 opacity-100': rla.isActive,
-                      'bg-neutral-500/60 opacity-0 group-hover:opacity-60': !rla.isActive
-                    }"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="truncate">{{ project.name }}</span>
+        {{ userInitial }}
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <aside
+      class="bg-[#1a202c] p-4 border-r border-neutral-700 flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden"
+      [class.w-64]="!isSidebarCollapsed"
+      [class.w-0]="isSidebarCollapsed"
+      [class.p-4]="!isSidebarCollapsed"
+      [class.p-0]="isSidebarCollapsed"
+    >
+      <nav class="space-y-2 whitespace-nowrap">
+        <a
+          routerLink=""
+          routerLinkActive="bg-sky-500/20 text-sky-400"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors"
+          >Dashboard</a
+        >
+        <a
+          *ngIf="userRole?.toUpperCase() === 'ADMIN'"
+          routerLink="/users"
+          routerLinkActive="bg-sky-500/20 text-sky-400"
+          class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-700/50 transition-colors"
+          >Users</a
+        >
+        <div class="relative">
+          <button
+            (click)="toggleProjects()"
+            class="flex items-center justify-between w-full px-2 py-2 rounded hover:bg-neutral-700"
+          >
+            <span class="flex items-center gap-2">
+              <lucide-icon name="Folder" size="16"></lucide-icon>
+              Projects
+            </span>
+            <lucide-icon
+              [name]="projectsExpanded ? 'ChevronUp' : 'ChevronDown'"
+              size="16"
+            ></lucide-icon>
+          </button>
+          <div *ngIf="projectsExpanded" class="pl-4 mt-2 space-y-1">
+            <ng-container *ngIf="projects.length > 0; else noProjects">
+              <div *ngFor="let project of projects" class="group relative flex items-center justify-between rounded-md text-sm" routerLinkActive="is-active" #rla="routerLinkActive">
+                <a [routerLink]="['/projects', project.projectId]" class="flex-grow truncate py-1.5 pl-3 pr-8 rounded-md" [ngClass]="{
+                  'text-sky-400 bg-sky-500/10': rla.isActive,
+                  'text-neutral-300 hover:bg-neutral-800/60': !rla.isActive
+                }">
+                  {{ project.name }}
                 </a>
-              </ng-container>
-   
-              <ng-template #noProjects>
-                <div
-                  *ngIf="userRole === 'manager' || userRole === 'admin'"
-                  class="text-sm text-neutral-400"
-                >
-                  No projects yet.
-                  <button class="text-sky-500 hover:underline mt-1 block" (click)="createProject()">
-                    + Create Project
+                
+                <div class="absolute right-1 top-1/2 -translate-y-1/2 z-10">
+                  <button z-button zType="ghost" size="icon" z-dropdown [zDropdownMenu]="menu" (click)="$event.stopPropagation()" class="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-neutral-700" aria-label="Project options">
+                    <lucide-icon name="more-horizontal" size="18" class="text-neutral-400"></lucide-icon>
                   </button>
+                  <z-dropdown-menu-content #menu="zDropdownMenuContent" class="w-40 z-50 bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
+                    <z-dropdown-menu-item (click)="openEditProjectModal(project)">
+                      <lucide-icon name="pencil" size="16" class="mr-2"></lucide-icon>
+                      <span>Edit</span>
+                    </z-dropdown-menu-item>
+                    <z-dropdown-menu-item (click)="deleteProject(project.projectId)" class="text-red-400 hover:!text-red-400 focus:!text-red-400 hover:!bg-red-500/10 focus:!bg-red-500/10">
+                      <lucide-icon name="trash-2" size="16" class="mr-2"></lucide-icon>
+                      <span>Delete</span>
+                    </z-dropdown-menu-item>
+                  </z-dropdown-menu-content>
                 </div>
-                <div *ngIf="userRole === 'user'" class="text-sm text-neutral-400">
-                  You haven't been added to any projects yet.
-                </div>
-              </ng-template>
+              </div>
+            </ng-container>
+          
+            <ng-template #noProjects>
+              <div class="text-sm text-neutral-400 px-3 py-1">No projects yet.</div>
+            </ng-template>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <app-navbar
+        *ngIf="showNavbar"
+        [projectId]="projectId"
+        [projectName]="projectName"
+      ></app-navbar>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <div *ngIf="isEditProjectModalOpen" class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-out" [ngClass]="{ 'opacity-100': isEditProjectModalOpen, 'opacity-0': !isEditProjectModalOpen, 'pointer-events-none': !isEditProjectModalOpen }">
+    <div (click)="closeEditProjectModal()" class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
+    <div *ngIf="editingProject" class="relative bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg p-6 mx-4 transition-all transform duration-300 ease-out" [ngClass]="{ 'scale-100 opacity-100': isEditProjectModalOpen, 'scale-95 opacity-0': !isEditProjectModalOpen }">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-700">
+        <h2 class="text-xl font-bold text-neutral-100">Edit Project</h2>
+        <button type="button" (click)="closeEditProjectModal()" class="p-2 -mr-2 rounded-full text-neutral-400 hover:bg-slate-700 hover:text-white transition-colors">
+          <lucide-icon name="x" size="24"></lucide-icon>
+        </button>
+      </div>
+  
+      <form (ngSubmit)="submitEditProject()" #editProjectForm="ngForm" class="space-y-5">
+        <div>
+          <label class="block mb-1.5 text-sm font-medium text-neutral-300">Project Name</label>
+          <input type="text" class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600" [(ngModel)]="editingProject.name" name="name" required />
+        </div>
+  
+        <div>
+          <label class="block mb-1.5 text-sm font-medium text-neutral-300">Description</label>
+          <textarea class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600" [(ngModel)]="editingProject.description" name="description" rows="3"></textarea>
+        </div>
+  
+        <div>
+          <label class="block mb-1.5 text-sm font-medium text-neutral-300">Status</label>
+          <select class="w-full px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600" [(ngModel)]="editingProject.status" name="status">
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="PENDING">PENDING</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="COMPLETED">COMPLETED</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block mb-1.5 text-sm font-medium text-neutral-300">Assign Employees</label>
+          <div class="relative">
+            <button type="button" (click)="showEmployeeDropdown = !showEmployeeDropdown" class="w-full text-left px-3 py-2.5 rounded-lg bg-slate-900/50 border border-slate-600">
+              {{ selectedEmployeeIds.length ? selectedEmployeeIds.length + ' selected' : 'Select employees' }}
+            </button>
+            <div *ngIf="showEmployeeDropdown" class="absolute z-10 mt-2 w-full max-h-48 overflow-y-auto bg-slate-900 border border-slate-700 rounded-lg shadow-lg p-2">
+              <div *ngFor="let emp of employees" class="flex items-center gap-2 hover:bg-slate-800/60 rounded px-2 py-1">
+                <input type="checkbox" [value]="emp.user_id" [checked]="selectedEmployeeIds.includes(emp.user_id!)" (change)="toggleEmployeeSelection(emp.user_id!, $event)" class="accent-sky-500" />
+                <label class="cursor-pointer text-sm select-none">{{ emp.username || emp.email }}</label>
+              </div>
             </div>
           </div>
-        </nav>
-      </aside>
+        </div>
   
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-        <router-outlet></router-outlet>
-      </main>
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" class="px-5 py-2.5 bg-transparent border border-neutral-600 text-neutral-300 hover:bg-neutral-700" (click)="closeEditProjectModal()">Cancel</button>
+          <button type="submit" [disabled]="editProjectForm.invalid" class="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-semibold rounded-lg disabled:opacity-50">Save Changes</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
