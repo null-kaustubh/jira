@@ -70,10 +70,7 @@ export class MainLayoutComponent {
   ngOnInit() {
     this.userRole = this.jwtService.getUserRole();
 
-    // Initial check
     this.updateProjectContext();
-
-    // Listen to navigation changes
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateProjectContext();
     });
@@ -93,7 +90,6 @@ export class MainLayoutComponent {
   updateProjectContext() {
     const url = this.router.url;
 
-    // Match URLs like /projects/123/summary, /projects/123/tasks, etc.
     const projectMatch = url.match(/\/projects\/(\d+)/);
 
     if (projectMatch) {
