@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth } from 'src/app/services/AuthService/auth';
+import { Auth } from 'src/app/services/auth';
 import { NewUser } from 'src/app/types/User';
 
 @Component({
@@ -17,7 +17,7 @@ export class Register {
   email = '';
   username = '';
   password = '';
-  role = 'user';
+  role = 'EMPLOYEE';
   showPass = false;
 
   validations = {

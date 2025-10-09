@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { JwtService } from 'src/app/services/JWT/jwtService';
+import { JwtService } from 'src/app/services/jwtService';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +11,6 @@ import { JwtService } from 'src/app/services/JWT/jwtService';
   styleUrls: ['./home.css']
 })
 export class HomeComponent {
-  // We'll use mock data for now. This will later come from your services.
   username = 'Aditya';
 
   userRole: string | null = null;

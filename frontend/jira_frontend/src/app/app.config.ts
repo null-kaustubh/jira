@@ -19,7 +19,10 @@ import {
   Folder,
   House,
   LucideAngularModule,
+  MoreHorizontal,
+  Pencil,
   Settings,
+  Trash2,
 } from 'lucide-angular';
 
 registerLocaleData(en);
@@ -31,9 +34,18 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideHttpClient(withInterceptors([authInterceptor])) ,
+    provideHttpClient(withInterceptors([authInterceptor])),
     importProvidersFrom(
-      LucideAngularModule.pick({ House, Folder, ChevronDown, ChevronUp, Settings })
+      LucideAngularModule.pick({
+        House,
+        Folder,
+        ChevronDown,
+        ChevronUp,
+        Settings,
+        MoreHorizontal,
+        Pencil,
+        Trash2,
+      })
     ),
   ],
 };

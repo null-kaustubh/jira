@@ -26,10 +26,29 @@ export const routes: Routes = [
         path: 'projects/:id',
         children: [
           {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'boards',
+          },
+          {
+            path: 'summary',
+            loadComponent: () =>
+              import('./pages/project-summary/project-summary').then((m) => m.ProjectSummary),
+          },
+          {
             path: 'boards',
-            loadComponent: () => {
-              return import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard);
-            },
+            loadComponent: () =>
+              import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard),
+          },
+          {
+            path: 'forms',
+            loadComponent: () =>
+              import('./pages/project-forms/project-forms').then((m) => m.ProjectForms),
+          },
+          {
+            path: 'list',
+            loadComponent: () =>
+              import('./pages/project-list/project-list').then((m) => m.ProjectList),
           },
         ],
       },

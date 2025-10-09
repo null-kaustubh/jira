@@ -11,6 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/project/{projectId}/tasks")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TaskController {
 
 	private TaskUtils taskUtils;

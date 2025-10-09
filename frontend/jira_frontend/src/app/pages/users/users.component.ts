@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// Ensure this User import is from the correct file
-import { User } from 'src/app/services/AuthService/authInterface';
-import { JwtService } from 'src/app/services/JWT/jwtService';
+import { User } from 'src/app/types/authInterface';
+import { JwtService } from 'src/app/services/jwtService';
 import { UserService } from 'src/app/services/user-service';
 
 @Component({
@@ -33,8 +32,6 @@ export class UsersComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (data) => {
         this.users = data.users.length ? data.users : [];
-        console.log(this.users);
-
         this.isLoading = false;
       },
       error: (err) => {
