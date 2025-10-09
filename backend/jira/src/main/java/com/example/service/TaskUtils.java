@@ -9,7 +9,7 @@ import com.example.model.entity.Task;
 @Component
 public class TaskUtils {
 
-	private final List<String> STATUS_FLOW = List.of("TODO", "IN_PROGRESS", "IN_REVIEW", "DONE");
+	private final List<String> STATUS_FLOW = List.of("TO_DO", "IN_PROGRESS", "IN_REVIEW", "DONE");
 
 	public int getStatusIndex(String status) {
 		return STATUS_FLOW.indexOf(status);

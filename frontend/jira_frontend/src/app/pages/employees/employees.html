@@ -1,0 +1,59 @@
+<div class="bg-slate-900 text-neutral-200 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
+          Project Employees: <span class="text-sky-400">{{ projectName }}</span>
+        </h1>
+        <button
+          (click)="addEmployee()"
+          class="bg-sky-500 font-semibold text-white px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-sky-600 transition-colors"
+        >
+          Add Employee
+        </button>
+      </div>
+  
+      <div class="bg-[#1a202c] rounded-lg shadow-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-slate-800/60 text-xs text-neutral-400 uppercase tracking-wider">
+              <tr>
+                <th scope="col" class="px-6 py-3">Username</th>
+                <th scope="col" class="px-6 py-3">Email</th>
+                <th scope="col" class="px-6 py-3">Role</th>
+                <th scope="col" class="px-6 py-3">
+                  <span class="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody *ngIf="!isLoading">
+              <tr
+                *ngFor="let employee of employees"
+                class="border-b border-neutral-700 hover:bg-slate-800/40 transition-colors"
+              >
+                <td class="px-6 py-4 font-medium whitespace-nowrap">{{ employee.username }}</td>
+                <td class="px-6 py-4 text-neutral-300">{{ employee.email }}</td>
+                <td class="px-6 py-4 text-neutral-300 capitalize">{{ employee.role | lowercase }}</td>
+                <td class="px-6 py-4 text-right">
+                  <button
+                    (click)="removeEmployee(employee.user_id)"
+                    class="font-medium text-red-500 hover:text-red-400 transition-colors"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="employees.length === 0">
+                <td colspan="4" class="text-center py-10 text-neutral-500">
+                  No employees are assigned to this project yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+  
+          <div *ngIf="isLoading" class="flex justify-center items-center py-10">
+            <p class="text-neutral-500">Loading employees...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

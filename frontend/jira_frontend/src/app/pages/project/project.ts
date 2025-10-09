@@ -7,6 +7,6 @@ import { ProjectFull } from 'src/app/types/project';
   selector: 'app-project',
   imports: [],
   templateUrl: './project.html',
-  styleUrl: './project.css',
+  // styleUrl: './project.css',
 })
 export class Project {}

@@ -92,53 +92,57 @@ export class KanbanBoard implements OnInit {
     }
   }
 
-  onDrop(event: DragEvent, status: string) {
+  onDrop(event: DragEvent, newStatus: string) {
     event.preventDefault();
-    if (this.draggingTaskId == null) return;
+  
+    if (!this.draggingTaskId) return;
+  
+    const draggedTaskIndex = this.tasks.findIndex(t => t.id === this.draggingTaskId);
+    if (draggedTaskIndex === -1) return;
+  
+    const draggedTask = this.tasks[draggedTaskIndex];
+    const oldStatus = draggedTask.status;
+  
+    if (oldStatus === newStatus) {
+      this.clearDragState();
+      return;
+    }
 
-    const taskIndex = this.tasks.findIndex((t) => t.id === this.draggingTaskId);
-    if (taskIndex === -1) return;
-
-    const [draggedTask] = this.tasks.splice(taskIndex, 1);
-
-    const prevStatus = draggedTask.status;
-    draggedTask.status = status as TaskStatus;
-
-    let insertAt: number;
-    if (this.dragOverTaskId === null) {
-      const columnTasks = this.tasks.filter((t) => t.status === status);
-      if (columnTasks.length > 0) {
-        const lastTaskIndex = this.tasks.findIndex(
-          (t) => t.id === columnTasks[columnTasks.length - 1].id
-        );
-        insertAt = lastTaskIndex + 1;
-      } else {
-        insertAt = this.tasks.length;
-      }
-    } else {
-      const targetIndex = this.tasks.findIndex((t) => t.id === this.dragOverTaskId);
+    this.tasks.splice(draggedTaskIndex, 1);
+  
+    draggedTask.status = newStatus as TaskStatus;
+  
+    let insertIndex = this.tasks.length;
+    if (this.dragOverTaskId) {
+      const targetIndex = this.tasks.findIndex(t => t.id === this.dragOverTaskId);
       if (targetIndex !== -1) {
-        insertAt = this.dragOverPosition === 'after' ? targetIndex + 1 : targetIndex;
-      } else {
-        insertAt = this.tasks.length;
+        insertIndex = this.dragOverPosition === 'after' ? targetIndex + 1 : targetIndex;
       }
     }
-
-    this.tasks.splice(insertAt, 0, draggedTask);
-
-    if ((status === 'DONE' && prevStatus !== 'DONE') ||
-        (status === 'TO DO' && prevStatus !== 'TO_DO') ||
-        (status === 'IN REVIEW' && prevStatus !== 'IN_REVIEW')||
-        (status === 'IN PROGRESS' && prevStatus !== 'IN_PROGRESS')) {
-      this.recentlyCompleted.add(draggedTask.id);
-      setTimeout(() => {
-        this.recentlyCompleted.delete(draggedTask.id);
-      }, 900);
-    }
+  
+    this.tasks.splice(insertIndex, 0, draggedTask);
+  
+    this.recentlyCompleted.add(draggedTask.id);
+    setTimeout(() => this.recentlyCompleted.delete(draggedTask.id), 800);
+  
+    console.log(draggedTask, this.projectId, oldStatus, newStatus);
     
+    this.taskService.updateTask(this.projectId, draggedTask.id, draggedTask).subscribe({
+      next: (updatedTask) => {
+        console.log(`Task ${updatedTask.id} updated to ${newStatus}`);
+        const i = this.tasks.findIndex(t => t.id === updatedTask.id);
+        if (i !== -1) this.tasks[i] = updatedTask;
+      },
+      error: (err) => {
+        console.error('Error updating task status:', err);
+        draggedTask.status = oldStatus;
+        this.loadTasks();
+      },
+    });
+  
     this.clearDragState();
   }
-
+  
   onDragEnd(event: DragEvent) {
     (event.target as HTMLElement).classList.remove('dragging');
     this.clearDragState();

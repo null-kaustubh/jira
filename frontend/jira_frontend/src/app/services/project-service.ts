@@ -33,7 +33,7 @@ export class ProjectService {
     return this.http.put<UpdateProject>(`${this.apiUrl}/${projectId}`, updateProject);
   }
 
-  deleteProject(projectId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${projectId}`);
+  deleteProject(projectId: number): Observable<string> { 
+    return this.http.delete(`${this.apiUrl}/${projectId}`, { responseType: 'text' });
   }
 }

@@ -40,9 +40,9 @@ export const routes: Routes = [
               import('./components/kanban-board/kanban-board').then((m) => m.KanbanBoard),
           },
           {
-            path: 'list',
+            path: 'employees',
             loadComponent: () =>
-              import('./pages/project-list/project-list').then((m) => m.ProjectList),
+              import('./pages/employees/employees').then((m) => m.Employees),
           },
         ],
       },

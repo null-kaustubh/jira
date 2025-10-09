@@ -222,18 +222,12 @@ export class MainLayoutComponent {
     });
   }
 
-  createProject() {}
-
-  editProject(projectId: number) {}
-
   deleteProject(projectId: number) {
     if (confirm('Are you sure you want to delete this project?')) {
       this.projectService.deleteProject(projectId).subscribe({
         next: () => {
-          this.getAllProjects(); 
-          if (this.projectId === projectId) {
-            this.router.navigate(['/']);
-          }
+          this.projects = this.projects.filter(project => project.projectId !== projectId);
+          if (this.projectId === projectId) this.router.navigate(['']);
         },
         error: (err) => alert('Failed to delete project'),
       });
