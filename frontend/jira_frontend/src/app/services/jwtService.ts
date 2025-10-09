@@ -15,8 +15,28 @@ interface DecodedToken {
 export class JwtService {
   constructor() {}
 
+  // ✅ Added
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // ✅ Added
+  isTokenValid(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      const now = Date.now() / 1000;
+      return decoded.exp > now; // valid if not expired
+    } catch (err) {
+      console.error('Invalid token:', err);
+      return false;
+    }
+  }
+
   decodeToken(): DecodedToken | null {
-    const token = localStorage.getItem('token');
+    const token = this.getToken();
     if (token) {
       try {
         const decodedToken: DecodedToken = jwtDecode(token);

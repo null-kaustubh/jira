@@ -257,36 +257,70 @@
               size="16"
             ></lucide-icon>
           </button>
-          <div *ngIf="projectsExpanded" class="pl-4 mt-2 space-y-1">
+          <div *ngIf="projectsExpanded" class="pl-6 mt-2 space-y-1 overflow-y-auto overflow-x-hidden max-h-[400px] w-full sidebar-scroll">
             <ng-container *ngIf="projects.length > 0; else noProjects">
-              <div *ngFor="let project of projects" class="group relative flex items-center justify-between rounded-md text-sm" routerLinkActive="is-active" #rla="routerLinkActive">
-                <a [routerLink]="['/projects', project.projectId]" class="flex-grow truncate py-1.5 pl-3 pr-8 rounded-md" [ngClass]="{
-                  'text-sky-400 bg-sky-500/10': rla.isActive,
-                  'text-neutral-300 hover:bg-neutral-800/60': !rla.isActive
-                }">
-                  {{ project.name }}
-                </a>
-                
-                <div class="absolute right-1 top-1/2 -translate-y-1/2 z-10">
-                  <button z-button zType="ghost" size="icon" z-dropdown [zDropdownMenu]="menu" (click)="$event.stopPropagation()" class="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-neutral-700" aria-label="Project options">
-                    <lucide-icon name="more-horizontal" size="18" class="text-neutral-400"></lucide-icon>
-                  </button>
-                  <z-dropdown-menu-content #menu="zDropdownMenuContent" class="w-40 z-50 bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
-                    <z-dropdown-menu-item (click)="openEditProjectModal(project)">
+              <div
+                *ngFor="let project of projects"
+                class="group relative flex items-center justify-between rounded-md px-3 text-sm transition-colors cursor-pointer h-10"
+                [routerLink]="['/projects', project.projectId, 'summary']"
+                routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #rla="routerLinkActive"
+                [ngClass]="{
+                  'text-sky-500 bg-sky-500/10 hover:bg-sky-500/15': rla.isActive,
+                  'text-neutral-300 hover:text-neutral-50 hover:bg-neutral-800/60': !rla.isActive
+                }"
+                [attr.aria-current]="rla.isActive ? 'page' : null"
+              >
+                <!-- Project name + side bar -->
+                <span
+                  class="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r transition-opacity"
+                  [ngClass]="{
+                    'bg-sky-500 opacity-100': rla.isActive,
+                    'bg-neutral-500/60 opacity-0 group-hover:opacity-60': !rla.isActive
+                  }"
+                  aria-hidden="true"
+                ></span>
+                <div class="flex items-center gap-2 relative h-full">
+                  <span class="truncate">{{ project.name }}</span>
+                </div>
+ 
+                <!-- Dropdown -->
+                <div class="relative z-20" (click)="$event.stopPropagation()">
+                  <z-dropdown-menu-content
+                    #menu="zDropdownMenuContent"
+                    class="w-40 z-50 bg-slate-800"
+                  >
+                    <z-dropdown-menu-item (click)="openEditProjectModal(project)" tabindex="-1">
                       <lucide-icon name="pencil" size="16" class="mr-2"></lucide-icon>
-                      <span>Edit</span>
+                      Edit Project
                     </z-dropdown-menu-item>
-                    <z-dropdown-menu-item (click)="deleteProject(project.projectId)" class="text-red-400 hover:!text-red-400 focus:!text-red-400 hover:!bg-red-500/10 focus:!bg-red-500/10">
-                      <lucide-icon name="trash-2" size="16" class="mr-2"></lucide-icon>
-                      <span>Delete</span>
+                    <z-dropdown-menu-item (click)="deleteProject(project.projectId)" tabindex="-1">
+                      <lucide-icon name="trash-2" size="16" class="mr-2 text-red-400"></lucide-icon>
+                      Delete Project
                     </z-dropdown-menu-item>
                   </z-dropdown-menu-content>
+ 
+                  <button
+                    z-button
+                    zType="ghost"
+                    size="icon"
+                    z-dropdown
+                    [zDropdownMenu]="menu"
+                    class="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+                  >
+                    <lucide-icon
+                      name="more-horizontal"
+                      size="18"
+                      class="text-neutral-400 group-hover:text-neutral-100"
+                    ></lucide-icon>
+                  </button>
                 </div>
               </div>
             </ng-container>
-          
+ 
             <ng-template #noProjects>
-              <div class="text-sm text-neutral-400 px-3 py-1">No projects yet.</div>
+              <div class="text-sm text-neutral-400 pl-1">No projects yet.</div>
             </ng-template>
           </div>
         </div>
