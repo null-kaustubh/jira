@@ -7,6 +7,7 @@ import { TaskService } from 'src/app/services/taskService';
 import { LucideAngularModule } from 'lucide-angular';
 import { User } from 'src/app/types/authInterface';
 import { UserService } from 'src/app/services/user-service';
+import { JwtService } from 'src/app/services/jwtService';
 
 @Component({
   selector: 'app-kanban-board',
@@ -19,10 +20,12 @@ export class KanbanBoard implements OnInit {
   @Input() projectId!: number;
   taskStatus = ['TO_DO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   tasks: Task[] = [];
+  role : string | null = null;
   
-  constructor(private route: ActivatedRoute, private taskService : TaskService,private userService: UserService) {}
+  constructor(private route: ActivatedRoute, private taskService : TaskService,private userService: UserService, private jwtService : JwtService) {}
  
   ngOnInit() {
+    this.role = this.jwtService.getUserRole();
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
       if (!isNaN(id) && id > 0) {      
@@ -186,6 +189,11 @@ export class KanbanBoard implements OnInit {
       if (index !== -1) {
         this.tasks[index] = { ...this.selectedTask };
       }
+      this.taskService.updateTask(this.projectId, this.selectedTask.id, this.selectedTask).subscribe(
+        (res) =>{
+          console.log(res);
+        }
+      );
       this.closeModal();
     }
   }

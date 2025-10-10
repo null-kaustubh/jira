@@ -17,9 +17,7 @@ export class AuthGuard implements CanActivate {
     const role = this.jwtService.getUserRole(); // e.g., 'admin', 'user', etc.
     const url = state.url; // current route path
 
-    // ✅ Access control rules
     if (url.startsWith('/users') && role !== 'ADMIN') {
-      // only admin can view users
       return this.router.createUrlTree(['/']);
     }
 

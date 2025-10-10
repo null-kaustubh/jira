@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit {
   }
 
   createNewUser(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/users/register']);
   }
 
   handleDeleteUser(id: number): void {
