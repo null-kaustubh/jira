@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  Router,
+  ActivatedRoute,
   RouterLink,
   RouterOutlet,
   RouterLinkActive,
-  ActivatedRoute,
-  Router,
   NavigationEnd,
 } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -39,50 +39,131 @@ import { ZardButtonComponent } from '@shared/components/button/button.component'
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
+  // layout state
   isSidebarCollapsed = false;
   projectsExpanded = false;
+
+  // project context
   projectId: number | null = null;
-  userInitial = 'K';
-  showEmployeeDropdown = false;
-  showNavbar = false;
   projectName: string = '';
+  showNavbar = false;
 
+  // user info / dropdown
+  userInitial = 'K';
+  userName: string = '';
+  userEmail: string = '';
+  userRole: string | null = null;
+  showUserMenu = false;
+
+  // projects / employees
+  projects: ProjectFull[] = [];
+  employees: User[] = [];
+  isLoading = true;
+
+  // create / edit modals
+  isCreateProjectModalOpen = false;
   isEditProjectModalOpen = false;
-  editingProject: ProjectFull | null = null; 
+  editingProject: ProjectFull | null = null;
 
+  // selection state
+  selectedEmployeeIds: number[] = [];
+  showEmployeeDropdown = false;
+
+  // misc
   menuRefs: Record<number, any> = {};
+
+  // form model for new project
+  newProject: any = {
+    name: '',
+    description: '',
+    managerId: null,
+    employeeIdsString: '',
+    status: 'ACTIVE',
+  };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private projectService: ProjectService,
     private jwtService: JwtService,
-    private empService: UserService
+    private userService: UserService,
+    private elRef: ElementRef
   ) {}
 
-  projects: ProjectFull[] = [];
-  isLoading = true;
-  userRole: string | null = null;
-  employees: User[] = [];
-  selectedEmployeeIds: number[] = [];
-
   ngOnInit() {
+    // read token-derived info
     this.userRole = this.jwtService.getUserRole();
+    const email = this.jwtService.getUserEmail();
+    this.userEmail = email ?? 'unknown@example.com';
+    this.userInitial = this.userEmail ? this.userEmail.charAt(0).toUpperCase() : '?';
 
+    // update project context on route changes
     this.updateProjectContext();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateProjectContext();
     });
 
+    // load projects
     this.getAllProjects();
 
-    this.empService.getAllUsers().subscribe({
+    // load users once: set employees and current user's display name
+    this.userService.getAllUsers().subscribe({
       next: (res) => {
-        this.employees = res.users.filter((u) => u.role === 'EMPLOYEE');
+        // employees list (for selection)
+        this.employees = Array.isArray(res.users) ? res.users.filter((u) => u.role === 'EMPLOYEE') : [];
+
+        // derive current user's name (if available)
+        const userId = this.jwtService.getUserId();
+        const currentUser = Array.isArray(res.users) ? res.users.find((u) => u.user_id === userId) : null;
+        if (currentUser) {
+          this.userName = currentUser.username ?? this.userEmail;
+          this.userInitial = (currentUser.username ? currentUser.username.charAt(0) : this.userEmail.charAt(0)).toUpperCase();
+        } else {
+          this.userName = this.userEmail;
+        }
       },
       error: (err) => {
+        console.error('Failed to fetch users', err);
         this.employees = [];
+        this.userName = this.userEmail;
+      },
+    });
+  }
+
+  // Close dropdown if clicked outside component
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elRef.nativeElement.contains(event.target) && this.showUserMenu) {
+      this.showUserMenu = false;
+    }
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  // Sidebar/project toggles
+  toggleProjects() {
+    this.projectsExpanded = !this.projectsExpanded;
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  // Projects API
+  getAllProjects() {
+    this.projectService.getAllProjects().subscribe({
+      next: (data) => {
+        // Accept array or fallback to empty
+        this.projects = Array.isArray(data) && data.length ? (data as any) : [];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load projects', err);
+        this.projects = [];
+        this.isLoading = false;
       },
     });
   }
@@ -97,12 +178,13 @@ export class MainLayoutComponent {
 
       this.projectId = newProjectId;
       this.showNavbar = true;
-      
+
+      // fetch project name for header (safe)
       this.projectService.getProjectById(newProjectId).subscribe({
         next: (project) => {
           this.projectName = project.name;
         },
-        error: (err) => {
+        error: () => {
           this.projectName = 'Unknown Project';
         },
       });
@@ -113,45 +195,16 @@ export class MainLayoutComponent {
     }
   }
 
+  // Employee multi-select toggles for create/edit
   toggleEmployeeSelection(employeeId: number, event: any) {
     if (event.target.checked) {
-      this.selectedEmployeeIds.push(employeeId);
+      if (!this.selectedEmployeeIds.includes(employeeId)) this.selectedEmployeeIds.push(employeeId);
     } else {
       this.selectedEmployeeIds = this.selectedEmployeeIds.filter((id) => id !== employeeId);
     }
   }
 
-  getAllProjects() {
-    this.projectService.getAllProjects().subscribe({
-      next: (data) => {
-        this.projects = Array.isArray(data) && data.length ? data : [];
-        this.isLoading = false;
-      },
-    });
-  }
-
-  toggleProjects() {
-    this.projectsExpanded = !this.projectsExpanded;
-  }
-
-  toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
-
-  logout() {
-    console.log('Logout clicked');
-  }
-
-  isCreateProjectModalOpen = false;
-
-  newProject: any = {
-    name: '',
-    description: '',
-    managerId: null,
-    employeeIdsString: '',
-    status: 'ACTIVE',
-  };
-
+  // Create project flow
   openCreateProjectModal() {
     this.isCreateProjectModalOpen = true;
   }
@@ -165,6 +218,7 @@ export class MainLayoutComponent {
       employeeIdsString: '',
       status: 'ACTIVE',
     };
+    this.selectedEmployeeIds = [];
   }
 
   submitCreateProject() {
@@ -190,8 +244,9 @@ export class MainLayoutComponent {
     });
   }
 
+  // Edit project flow
   openEditProjectModal(project: ProjectFull) {
-    this.editingProject = { ...project }; 
+    this.editingProject = { ...project };
     this.selectedEmployeeIds = project.employees?.map((emp: any) => emp.user_id) || [];
     this.isEditProjectModalOpen = true;
   }
@@ -205,12 +260,12 @@ export class MainLayoutComponent {
   submitEditProject() {
     if (!this.editingProject) return;
 
-    const payload : UpdateProject = {
+    const payload: UpdateProject = {
       name: this.editingProject.name,
       description: this.editingProject.description,
       employeeIds: this.selectedEmployeeIds,
       status: this.editingProject.status,
-      manager : this.editingProject.manager
+      manager: this.editingProject.manager,
     };
 
     this.projectService.updateProject(payload, this.editingProject.projectId).subscribe({
@@ -218,7 +273,10 @@ export class MainLayoutComponent {
         this.getAllProjects();
         this.closeEditProjectModal();
       },
-      error: (err) => alert('Failed to update project'),
+      error: (err) => {
+        console.error('Failed to update project', err);
+        alert('Failed to update project');
+      },
     });
   }
 
@@ -233,4 +291,7 @@ export class MainLayoutComponent {
       });
     }
   }
+
+  createProject() {}
+  editProject(projectId: number) {}
 }
