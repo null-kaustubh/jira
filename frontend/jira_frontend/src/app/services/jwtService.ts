@@ -68,8 +68,4 @@ export class JwtService {
     const decodedToken = this.decodeToken();
     return decodedToken ? decodedToken.id : null;
   }
-  getUsername(): string | null {
-    const decodedToken = this.decodeToken();
-    return decodedToken ? decodedToken.username : null;
-  }
 }
