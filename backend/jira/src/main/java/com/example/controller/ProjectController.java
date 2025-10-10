@@ -93,7 +93,7 @@ public class ProjectController {
 		}
     		try{
             User currentUser = userService.getUserFromToken(token);
-            if (!"ADMIN".equals(currentUser.getRole())) {
+            if (!"ADMIN".equals(currentUser.getRole()) || !"MANAGER".equals(currentUser.getRole())) {
                 return ResponseEntity.status(403).body("Access Denied: Only Admin can delete projects");
             }
             projectService.deleteProject(id);

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/types/authInterface';
 import { ProjectService } from 'src/app/services/project-service';
+import { JwtService } from 'src/app/services/jwtService';
 
 @Component({
   selector: 'app-employees',
@@ -15,10 +16,12 @@ export class Employees implements OnInit {
   projectId!: number;
   projectName = '';
   isLoading = true;
+  role :string|null = null;
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService ) {}
+  constructor(private route: ActivatedRoute, private projectService: ProjectService, private jwtService : JwtService ) {}
 
   ngOnInit(): void {
+    this.role = this.jwtService.getUserRole();
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.projectId = +idParam;
