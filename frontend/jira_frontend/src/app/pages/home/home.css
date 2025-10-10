@@ -14,13 +14,14 @@
   background-color: #2d3748; /* slightly lighter dark box */
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  user-select: none;
 
   h2 {
     font-size: 28px;
     font-weight: 700;
+    color: white;
     background: linear-gradient(90deg, #38bdf8, #818cf8); /* gradient like iTask */
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     margin-bottom: 5px;
     animation: fadeInDown 1s ease-out;
   }

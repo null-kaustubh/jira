@@ -125,29 +125,31 @@
           <ng-container *ngFor="let task of getTasksByStatus(status)">
             <div *ngIf="dragOverStatus === status && dragOverTaskId === task.id && dragOverPosition === 'before'"
                  class="h-1 bg-white/60 rounded transition-all duration-150"></div>
-            <div
-              class="flex justify-between items-start p-3 rounded-lg bg-zinc-800/80 shadow-md cursor-move
-                     transition-transform duration-200 hover:scale-95 border border-transparent"
-              draggable="true"
-              (dragstart)="onDragStart($event, task)"
-              (dragend)="onDragEnd($event)"
-              (dragover)="onDragOver($event, status, task.id)"
-              (click)="openModal(task)"
-              [ngClass]="{
-                'ring-2 ring-emerald-400/40': status==='DONE' && recentlyCompleted.has(task.id),
-                'ring-2 ring-yellow-400/40': status==='IN PROGRESS' && recentlyCompleted.has(task.id),
-                'ring-2 ring-purple-400/30': status==='IN REVIEW' && recentlyCompleted.has(task.id),
-                'ring-2 ring-blue-400/30': status==='TO DO' && recentlyCompleted.has(task.id)
-              }"
-            >
-            <span
-                  class="absolute bottom-1 right-1 w-3 h-3 rounded-full z-[9999]"
-                  [ngClass]="{
-                    'bg-red-500': task.priority === 'HIGH',
-                    'bg-yellow-400': task.priority === 'MEDIUM',
-                    'bg-green-500': task.priority === 'LOW'
-                  }"
-              ></span>
+                 <div
+                 class="relative flex justify-between items-start p-3 rounded-lg bg-zinc-800/80 shadow-md cursor-grab
+                        transition-transform duration-200 hover:scale-95 border border-transparent"
+                 draggable="true"
+                 (dragstart)="onDragStart($event, task)"
+                 (dragend)="onDragEnd($event)"
+                 (dragover)="onDragOver($event, status, task.id)"
+                 (click)="openModal(task)"
+                 [ngClass]="{
+                   'ring-2 ring-emerald-400/40': status==='DONE' && recentlyCompleted.has(task.id),
+                   'ring-2 ring-yellow-400/40': status==='IN PROGRESS' && recentlyCompleted.has(task.id),
+                   'ring-2 ring-purple-400/30': status==='IN REVIEW' && recentlyCompleted.has(task.id),
+                   'ring-2 ring-blue-400/30': status==='TO DO' && recentlyCompleted.has(task.id)
+                 }"
+               >               
+               <span
+  class="absolute bottom-2 right-2 w-2 h-2 rounded-full shadow-lg"
+  [ngClass]="{
+    'bg-red-500': task.priority === 'HIGH',
+    'bg-yellow-400': task.priority === 'MEDIUM',
+    'bg-green-500': task.priority === 'LOW'
+  }"
+></span>
+
+
               <div class="flex flex-col gap-1">
                 <h4 class="text-sm font-semibold text-white">{{ task.title }}</h4>
                 <p class="text-xs text-gray-300 line-clamp-2">{{ task.description }}</p>

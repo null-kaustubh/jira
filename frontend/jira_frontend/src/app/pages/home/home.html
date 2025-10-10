@@ -1,6 +1,6 @@
   <div class="dashboard-container">
     <div class="welcome-box">
-      <h2>Welcome back, <span>{{ username || 'User' }}</span> <span class="emoji">👋</span></h2>
+      <h2 class="wel">Welcome back, <span class="text-amber-400">{{ username || 'User' }}</span> <span class="emoji">👋</span></h2>
       <p>Here are your assigned projects</p>
     </div>
   
@@ -20,6 +20,20 @@
     </a>
     </div>
   
-    <div *ngIf="!isLoading && projects.length === 0">
-      <p>No projects assigned yet.</p>
-    </div>
+    <div
+  *ngIf="!isLoading && projects.length === 0"
+  class="flex flex-col items-center text-center py-12"
+>
+  <!-- Meme Emoji Face -->
+  <div class="text-6xl mb-4">🧍‍♂️</div>
+
+  <!-- Meme Text -->
+  <h3 class="text-xl font-semibold text-gray-200 mb-2">
+    No Projects Assigned... Yet 😶
+  </h3>
+  <p class="text-gray-400 max-w-md">
+    Just standing here like, <br>
+    <span class="italic">“Should I start a side hustle or take a nap?”</span>
+  </p>
+
+</div>
