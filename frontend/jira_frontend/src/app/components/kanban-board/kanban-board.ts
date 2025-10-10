@@ -189,6 +189,11 @@ export class KanbanBoard implements OnInit {
       if (index !== -1) {
         this.tasks[index] = { ...this.selectedTask };
       }
+      this.taskService.updateTask(this.projectId, this.selectedTask.id, this.selectedTask).subscribe(
+        (res) =>{
+          console.log(res);
+        }
+      );
       this.closeModal();
     }
   }

@@ -66,7 +66,6 @@ export class JwtService {
 
   getUserId(): number | null {
     const decodedToken = this.decodeToken();
-    console.log(decodedToken);
     return decodedToken ? decodedToken.id : null;
   }
 }

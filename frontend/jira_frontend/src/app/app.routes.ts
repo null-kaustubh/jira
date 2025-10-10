@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './pages/dashboard/dashboard';
-import { AuthGuard } from './services/auth.guard'; // ✅ import
+import { AuthGuard } from './services/auth.guard'; 
 
 export const routes: Routes = [
   {
@@ -8,14 +8,9 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
-    path: 'register',
-    canActivate: [AuthGuard], // ✅ Add this line
-    loadComponent: () => import('./pages/register/register').then((m) => m.Register),
-  },
-  {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [AuthGuard], // ✅ protect default route
+    canActivate: [AuthGuard], 
     children: [
       {
         path: '',
@@ -23,7 +18,16 @@ export const routes: Routes = [
       },
       {
         path: 'users',
-        loadComponent: () => import('./pages/users/users.component').then((m) => m.UsersComponent),
+        children :[
+          {
+            path : '',
+            loadComponent: () => import('./pages/users/users.component').then((m) => m.UsersComponent),
+          },
+          {
+            path: 'register',
+            loadComponent: () => import('./pages/register/register').then((m) => m.Register),
+          },
+        ]
       },
       {
         path: 'projects/:id',
