@@ -286,36 +286,40 @@
                 </div>
  
                 <!-- Dropdown -->
-                <div class="relative z-20" (click)="$event.stopPropagation()">
-                  <z-dropdown-menu-content
-                    #menu="zDropdownMenuContent"
-                    class="w-40 z-50 bg-slate-800"
-                  >
-                    <z-dropdown-menu-item (click)="openEditProjectModal(project)" tabindex="-1">
-                      <lucide-icon name="pencil" size="16" class="mr-2"></lucide-icon>
-                      Edit Project
-                    </z-dropdown-menu-item>
-                    <z-dropdown-menu-item (click)="deleteProject(project.projectId)" tabindex="-1">
-                      <lucide-icon name="trash-2" size="16" class="mr-2 text-red-400"></lucide-icon>
-                      Delete Project
-                    </z-dropdown-menu-item>
-                  </z-dropdown-menu-content>
- 
-                  <button
-                    z-button
-                    zType="ghost"
-                    size="icon"
-                    z-dropdown
-                    [zDropdownMenu]="menu"
-                    class="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
-                  >
-                    <lucide-icon
-                      name="more-horizontal"
-                      size="18"
-                      class="text-neutral-400 group-hover:text-neutral-100"
-                    ></lucide-icon>
-                  </button>
-                </div>
+<div 
+class="relative z-20" 
+(click)="$event.stopPropagation()" 
+*ngIf="userRole?.toUpperCase() === 'ADMIN' || userRole?.toUpperCase() === 'MANAGER'"
+>
+<z-dropdown-menu-content
+  #menu="zDropdownMenuContent"
+  class="w-40 z-50 bg-slate-800"
+>
+  <z-dropdown-menu-item (click)="openEditProjectModal(project)" tabindex="-1">
+    <lucide-icon name="pencil" size="16" class="mr-2"></lucide-icon>
+    Edit Project
+  </z-dropdown-menu-item>
+  <z-dropdown-menu-item (click)="deleteProject(project.projectId)" tabindex="-1">
+    <lucide-icon name="trash-2" size="16" class="mr-2 text-red-400"></lucide-icon>
+    Delete Project
+  </z-dropdown-menu-item>
+</z-dropdown-menu-content>
+
+<button
+  z-button
+  zType="ghost"
+  size="icon"
+  z-dropdown
+  [zDropdownMenu]="menu"
+  class="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+>
+  <lucide-icon
+    name="more-horizontal"
+    size="18"
+    class="text-neutral-400 group-hover:text-neutral-100"
+  ></lucide-icon>
+</button>
+</div>
               </div>
             </ng-container>
  
