@@ -199,6 +199,27 @@ export class KanbanBoard implements OnInit {
     }
   }
 
+  deleteTask() {
+    if (!this.selectedTask) {
+      console.error('No task selected for deletion.');
+      return;
+    }
+    const isConfirmed = confirm('Are you sure you want to permanently delete this task?');
+  
+    if (isConfirmed) {
+      this.taskService.deleteTask(this.projectId, this.selectedTask.id).subscribe({
+        next: () => {
+          this.tasks = this.tasks.filter(task => task.id !== this.selectedTask!.id);
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Failed to delete task:', err);
+          alert('Error: Could not delete the task. Please try again.');
+        },
+      });
+    }
+  }
+
   getColumnGradient(index: number): string {
     const classes = ['bg-gradient-to-t from-blue-800 via-indigo-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(79,70,229,0.45)] hover:ring-4 hover:ring-indigo-500/40',
       'bg-gradient-to-t from-blue-700 via-sky-900 to-slate-900 text-white hover:shadow-[0_24px_80px_rgba(14,165,233,0.4)] hover:ring-4 hover:ring-sky-400/35',
