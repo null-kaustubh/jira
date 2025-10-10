@@ -21,6 +21,7 @@ export class KanbanBoard implements OnInit {
   taskStatus = ['TO_DO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   tasks: Task[] = [];
   role : string | null = null;
+  isLoading = true;
   
   constructor(private route: ActivatedRoute, private taskService : TaskService,private userService: UserService, private jwtService : JwtService) {}
  
@@ -37,12 +38,15 @@ export class KanbanBoard implements OnInit {
   }
 
   loadTasks(): void {
+    this.isLoading = true;
     this.taskService.getTasksByProjectId(this.projectId).subscribe({
       next: (tasks) => {
         this.tasks = tasks;
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading tasks:', err);
+        this.isLoading = false;
       },
     });
   }

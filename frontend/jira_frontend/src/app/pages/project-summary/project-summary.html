@@ -1,5 +1,12 @@
-<div class="p-6 text-white bg-slate-800 pb-15">
-  <div class="flex justify-between items-center mb-6">
+<div class="p-6 relative text-white bg-slate-800 pb-15">
+      <div *ngIf="isLoading"
+      class="absolute inset-0 flex items-start justify-center
+            bg-gradient-to-br from-sky-950  to-lightblue-700
+            bg-opacity-70 z-10 pt-10"> 
+    <div class="w-16 h-16 border-7 border-gray-600 border-t-blue-700 rounded-full animate-spin"></div>
+    </div>
+  <div class="flex  justify-between items-center mb-6">
+   
     <h1 class="text-2xl font-bold">Project Summary</h1>
 
     <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-5">

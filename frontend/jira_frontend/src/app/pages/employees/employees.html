@@ -52,8 +52,8 @@
             </tbody>
           </table>
   
-          <div *ngIf="isLoading" class="flex justify-center items-center py-10">
-            <p class="text-neutral-500">Loading employees...</p>
+          <div *ngIf="isLoading" class="flex items-center justify-center py-10">
+            <div class="loader border-4 border-gray-700 border-t-white rounded-full w-10 h-10 animate-spin"></div>
           </div>
         </div>
       </div>

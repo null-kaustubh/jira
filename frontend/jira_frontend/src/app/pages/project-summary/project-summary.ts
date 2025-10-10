@@ -19,6 +19,7 @@ export class ProjectSummary implements OnInit {
   projectId!: number;
   projectName: string = '';
   stats: any = {};
+  isLoading = true;
 
   constructor(
     private taskService: TaskService,
@@ -27,13 +28,14 @@ export class ProjectSummary implements OnInit {
   ) {}
 
   fetchProjectData(projectId: number) {
+    this.isLoading = true;
     forkJoin({
       project: this.projectService.getProjectById(projectId),
       tasks: this.taskService.getTasksByProjectId(projectId),
     }).subscribe(({ project, tasks }) => {
       // set project name
       this.projectName = project.name;
-
+      this.isLoading = false;
       // derive counts
       const todo = tasks.filter((t) => t.status === 'TO_DO').length;
       const inProgress = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
