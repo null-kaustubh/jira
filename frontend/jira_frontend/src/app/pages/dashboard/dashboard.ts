@@ -69,6 +69,7 @@ export class MainLayoutComponent {
 
   ngOnInit() {
     this.userRole = this.jwtService.getUserRole();
+console.log(this.userRole);
 
     this.updateProjectContext();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
