@@ -1,4 +1,4 @@
-<div class="space-y-8 animate-fade-in">
+<!-- <div class="space-y-8 animate-fade-in">
     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <h1 class="text-3xl font-bold text-neutral-100 tracking-tight">
@@ -13,7 +13,7 @@
   
     <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <div class="lg:col-span-2 space-y-6">
+      <div class="lg:col-span-2 space-y-6a">
         
         <div class="widget-card">
           <h2 class="widget-title">My Tasks for Today</h2>
@@ -60,4 +60,36 @@
       </div>
   
     </main>
-  </div>
+  </div> -->
+
+  <div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-box">
+      <h2>Welcome back, <span>{{ username || 'User' }}</span> 👋</h2>
+      <p>Here are your assigned projects</p>
+    </div>
+  
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+    </div>
+  
+    <!-- Projects List -->
+    <div class="projects-list" *ngIf="!isLoading && projects.length > 0">
+      <a
+        *ngFor="let project of projects; let i = index"
+        class="project-card"
+        [style.--i]="i"
+        [routerLink]="['/projects', project.projectId, 'summary']"
+      >
+        <h3>{{ project.name }}</h3>
+        <p>{{ project.description }}</p>
+    </a>
+    </div>
+  
+    <!-- No Projects Assigned -->
+    <div *ngIf="!isLoading && projects.length === 0">
+      <p>No projects assigned yet.</p>
+    </div>
+  
+  

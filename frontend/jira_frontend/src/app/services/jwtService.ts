@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 
 interface DecodedToken {
+  username: string ;
   sub: string;
   role: string;
   id: number;
@@ -63,5 +64,9 @@ export class JwtService {
     const decodedToken = this.decodeToken();
     console.log(decodedToken);
     return decodedToken ? decodedToken.id : null;
+  }
+  getUsername(): string | null {
+    const decodedToken = this.decodeToken();
+    return decodedToken ? decodedToken.username : null;
   }
 }
