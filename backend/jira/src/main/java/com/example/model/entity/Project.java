@@ -36,6 +36,9 @@ public class Project {
     @ManyToMany
     @JoinTable(name = "project_employees",joinColumns = @JoinColumn(name = "project_id"),inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> employees = new HashSet<>();
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Task> tasks = new HashSet<>();
 
     public Set<User> getEmployees() {
 		return employees;
