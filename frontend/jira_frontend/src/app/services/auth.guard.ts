@@ -31,9 +31,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    if (url === '/login' && this.jwtService.isTokenValid()) {
-      return this.router.createUrlTree(['/']);
-    }
+
     // default → allow for authenticated users
     return true;
   }
