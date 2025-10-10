@@ -127,12 +127,9 @@ export class KanbanBoard implements OnInit {
   
     this.recentlyCompleted.add(draggedTask.id);
     setTimeout(() => this.recentlyCompleted.delete(draggedTask.id), 800);
-  
-    console.log(draggedTask, this.projectId, oldStatus, newStatus);
     
     this.taskService.updateTask(this.projectId, draggedTask.id, draggedTask).subscribe({
       next: (updatedTask) => {
-        console.log(`Task ${updatedTask.id} updated to ${newStatus}`);
         const i = this.tasks.findIndex(t => t.id === updatedTask.id);
         if (i !== -1) this.tasks[i] = updatedTask;
       },

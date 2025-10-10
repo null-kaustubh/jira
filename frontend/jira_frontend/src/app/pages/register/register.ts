@@ -74,7 +74,7 @@ export class Register {
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
-        this.router.navigate(['/projects/dashboard']);
+        this.router.navigate(['/users']);
       },
       error: (err) => {
         console.error('Registration failed:', err);
