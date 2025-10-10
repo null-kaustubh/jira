@@ -43,15 +43,24 @@ export class MainLayoutComponent {
   isSidebarCollapsed = false;
   projectsExpanded = false;
   projectId: number | null = null;
-  userInitial = 'K';
   showEmployeeDropdown = false;
   showNavbar = false;
   projectName: string = '';
-
   isEditProjectModalOpen = false;
-  editingProject: ProjectFull | null = null; 
-
+  editingProject: ProjectFull | null = null;
   menuRefs: Record<number, any> = {};
+
+  // User dropdown properties
+  userInitial = '?';
+  userName = '';
+  userEmail = '';
+  showUserMenu = false;
+
+  projects: ProjectFull[] = [];
+  isLoading = true;
+  userRole: string | null = null;
+  employees: User[] = [];
+  selectedEmployeeIds: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -61,50 +70,66 @@ export class MainLayoutComponent {
     private empService: UserService
   ) {}
 
-  projects: ProjectFull[] = [];
-  isLoading = true;
-  userRole: string | null = null;
-  employees: User[] = [];
-  selectedEmployeeIds: number[] = [];
-
   ngOnInit() {
-    this.userRole = this.jwtService.getUserRole();
+    // Decode JWT and extract user info
+    const email = this.jwtService.getUserEmail();
+    this.userEmail = email || '';
+    this.userInitial = email ? email.charAt(0).toUpperCase() : '?';
+    this.userRole = this.jwtService.getUserRole() || '';
 
+    // Fetch user full name from backend
+    this.empService.getAllUsers().subscribe({
+      next: (res) => {
+        const userId = this.jwtService.getUserId();
+        const currentUser = res.users.find((u) => u.user_id === userId);
+        if (currentUser) {
+          this.userName = currentUser.username || this.userEmail;
+        } else {
+          this.userName = this.userEmail;
+        }
+        this.employees = res.users.filter((u) => u.role === 'EMPLOYEE');
+      },
+      error: () => {
+        this.userName = this.userEmail;
+        this.employees = [];
+      },
+    });
+
+    // Handle project context
     this.updateProjectContext();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateProjectContext();
     });
 
+    // Load projects
     this.getAllProjects();
-
-    this.empService.getAllUsers().subscribe({
-      next: (res) => {
-        this.employees = res.users.filter((u) => u.role === 'EMPLOYEE');
-      },
-      error: (err) => {
-        this.employees = [];
-      },
-    });
   }
 
+  // Toggle User Menu
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  // Logout User
+  logout() {
+    localStorage.removeItem('token');
+    this.showUserMenu = false;
+    this.router.navigate(['/login']);
+  }
+
+  // Project Context
   updateProjectContext() {
     const url = this.router.url;
-
     const projectMatch = url.match(/\/projects\/(\d+)/);
 
     if (projectMatch) {
       const newProjectId = +projectMatch[1];
-
       this.projectId = newProjectId;
       this.showNavbar = true;
-      
+
       this.projectService.getProjectById(newProjectId).subscribe({
-        next: (project) => {
-          this.projectName = project.name;
-        },
-        error: (err) => {
-          this.projectName = 'Unknown Project';
-        },
+        next: (project) => (this.projectName = project.name),
+        error: () => (this.projectName = 'Unknown Project'),
       });
     } else {
       this.projectId = null;
@@ -136,10 +161,6 @@ export class MainLayoutComponent {
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
-
-  logout() {
-    console.log('Logout clicked');
   }
 
   isCreateProjectModalOpen = false;
@@ -191,7 +212,7 @@ export class MainLayoutComponent {
   }
 
   openEditProjectModal(project: ProjectFull) {
-    this.editingProject = { ...project }; 
+    this.editingProject = { ...project };
     this.selectedEmployeeIds = project.employees?.map((emp: any) => emp.user_id) || [];
     this.isEditProjectModalOpen = true;
   }
@@ -205,12 +226,12 @@ export class MainLayoutComponent {
   submitEditProject() {
     if (!this.editingProject) return;
 
-    const payload : UpdateProject = {
+    const payload: UpdateProject = {
       name: this.editingProject.name,
       description: this.editingProject.description,
       employeeIds: this.selectedEmployeeIds,
       status: this.editingProject.status,
-      manager : this.editingProject.manager
+      manager: this.editingProject.manager,
     };
 
     this.projectService.updateProject(payload, this.editingProject.projectId).subscribe({
@@ -218,7 +239,7 @@ export class MainLayoutComponent {
         this.getAllProjects();
         this.closeEditProjectModal();
       },
-      error: (err) => alert('Failed to update project'),
+      error: () => alert('Failed to update project'),
     });
   }
 
@@ -226,10 +247,10 @@ export class MainLayoutComponent {
     if (confirm('Are you sure you want to delete this project?')) {
       this.projectService.deleteProject(projectId).subscribe({
         next: () => {
-          this.projects = this.projects.filter(project => project.projectId !== projectId);
+          this.projects = this.projects.filter((p) => p.projectId !== projectId);
           if (this.projectId === projectId) this.router.navigate(['']);
         },
-        error: (err) => alert('Failed to delete project'),
+        error: () => alert('Failed to delete project'),
       });
     }
   }
