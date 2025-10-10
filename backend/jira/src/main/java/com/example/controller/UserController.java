@@ -56,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
             User registeredUser = userService.registerUser(user);
-            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole(), registeredUser.getUser_id());
+            String token = jwtUtil.generateToken(registeredUser.getEmail(), registeredUser.getRole(), registeredUser.getUser_id(), registeredUser.getUsername() );
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User registered successfully", "token", token));
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class UserController {
         try {
             User authenticatedUser = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole(), authenticatedUser.getUser_id());
+            String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole(), authenticatedUser.getUser_id(), authenticatedUser.getUsername() );
 
             return ResponseEntity.ok().body(
                     java.util.Map.of("message", "User logged in successfully", "token", token));

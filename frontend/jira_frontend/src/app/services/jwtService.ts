@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 
 interface DecodedToken {
+  username : string;
   sub: string;
   role: string;
   id: number;
@@ -20,7 +21,6 @@ export class JwtService {
     return localStorage.getItem('token');
   }
 
-  // ✅ Added
   isTokenValid(): boolean {
     const token = this.getToken();
     if (!token) return false;
@@ -28,7 +28,7 @@ export class JwtService {
     try {
       const decoded: DecodedToken = jwtDecode(token);
       const now = Date.now() / 1000;
-      return decoded.exp > now; // valid if not expired
+      return decoded.exp > now;
     } catch (err) {
       console.error('Invalid token:', err);
       return false;
@@ -52,6 +52,11 @@ export class JwtService {
   getUserRole(): string | null {
     const decodedToken = this.decodeToken();
     return decodedToken ? decodedToken.role : null;
+  }
+
+  getUsername(): string | null {
+    const decodedToken = this.decodeToken();
+    return decodedToken ? decodedToken.username : null;
   }
 
   getUserEmail(): string | null {
