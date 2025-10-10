@@ -212,34 +212,11 @@
     </div>
 
     <div class="flex items-center space-x-3">
-      <div class="relative" (clickOutside)="showUserMenu = false">
-        <!-- Avatar Button -->
-        <button
-          (click)="toggleUserMenu()"
-          class="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-offset-2 ring-offset-slate-900 ring-sky-500 hover:opacity-90 transition"
-        >
-          {{ userInitial }}
-        </button>
-      
-        <!-- Dropdown -->
-        <div
-          *ngIf="showUserMenu"
-          class="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg py-2 z-50"
-        >
-          <div class="px-4 py-2 border-b border-slate-700">
-            <p class="text-sm text-neutral-300 font-medium">{{ userName }}</p>
-            <p class="text-xs text-neutral-500 truncate">{{ userEmail }}</p>
-          </div>
-      
-          <button
-            (click)="logout()"
-            class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition"
-          >
-            Sign Out
-          </button>
-        </div>
+      <div
+        class="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-white text-sm font-bold ring-2 ring-offset-2 ring-offset-slate-900 ring-sky-500"
+      >
+        {{ userInitial }}
       </div>
-      
     </div>
   </header>
 
