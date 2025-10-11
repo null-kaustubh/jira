@@ -1,30 +1,28 @@
-<nav class="w-full bg-neutral-900 text-gray-300 border-b border-neutral-800">
+<nav class="w-175 bg-transparent text-gray-300 border-b border-neutral-800/30 backdrop-blur-sm relative">
   <div class="flex items-center px-4 py-2">
     <div class="flex items-center space-x-2 mr-6">
-      <span class="font-semibold text-lg">{{ projectName }}</span>
+      <span class="font-bold text-lg bg-gradient-to-r from-sky-400 to-indigo-500 text-transparent bg-clip-text">{{ projectName }}</span>
     </div>
 
     <div class="flex items-center space-x-6">
       <a
         [routerLink]="['/projects', projectId, 'summary']"
         routerLinkActive="text-blue-400 font-bold"
-        class="hover:text-blue-400"
+        class="nav-link"
         >Summary</a
       >
       <a
         [routerLink]="['/projects', projectId, 'boards']"
         routerLinkActive="text-blue-400 font-bold"
-        class="hover:text-blue-400"
+        class="nav-link"
         >Board</a
       >
       <a
         [routerLink]="['/projects', projectId, 'employees']"
         routerLinkActive="text-blue-400 font-bold"
-        class="hover:text-blue-400"
+        class="nav-link"
         >Project-Members</a
       >
     </div>
-
-    <div class="ml-auto flex items-center space-x-3"></div>
   </div>
 </nav>

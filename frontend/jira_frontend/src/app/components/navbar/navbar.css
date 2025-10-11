@@ -1,25 +1,18 @@
-/* Base navbar link styling */
-.nav-link {
+/* Only target actual navbar links, not everything */
+.navbar .nav-link {
   position: relative;
   font-weight: 500;
-  color: #d1d5db; /* gray-300 */
+  color: inherit; /* let Tailwind handle text color */
   transition: all 0.3s ease;
   padding-bottom: 0.25rem;
 }
 
-/* Hover effect with subtle glow */
-.nav-link:hover {
-  color: #60a5fa; /* blue-400 */
+.navbar .nav-link:hover {
+  color: #60a5fa; /* you can keep hover color */
   text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
 }
 
-/* Active link underline animation */
-.active {
-  color: #60a5fa;
-  font-weight: 600;
-}
-
-.active::after {
+.navbar .nav-link.active::after {
   content: "";
   position: absolute;
   left: 0;
@@ -31,19 +24,40 @@
   animation: underlineGrow 0.25s ease forwards;
 }
 
-/* Underline animation */
 @keyframes underlineGrow {
-  from {
-    width: 0;
-    opacity: 0;
-  }
-  to {
-    width: 100%;
-    opacity: 1;
-  }
+  from { width: 0; opacity: 0; }
+  to { width: 100%; opacity: 1; }
 }
 
-/* Optional: Subtle global dark background */
-* {
-  background-color: rgba(26, 32, 44, 0.6);
+/* Remove global * selector */
+
+
+/* Navbar link underline animation */
+.nav-link {
+  position: relative;
+  padding-bottom: 2px; /* space for underline */
+  color: inherit; /* use text-gray-300 from Tailwind */
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #60a5fa; /* blue-400 */
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.router-link-active::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: #60a5fa; /* optional */
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
 }
