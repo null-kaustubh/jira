@@ -33,10 +33,8 @@ export class ProjectSummary implements OnInit {
       project: this.projectService.getProjectById(projectId),
       tasks: this.taskService.getTasksByProjectId(projectId),
     }).subscribe(({ project, tasks }) => {
-      // set project name
       this.projectName = project.name;
       this.isLoading = false;
-      // derive counts
       const todo = tasks.filter((t) => t.status === 'TO_DO').length;
       const inProgress = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
       const inReview = tasks.filter((t) => t.status === 'IN_REVIEW').length;
@@ -98,11 +96,11 @@ export class ProjectSummary implements OnInit {
           legend: {
             position: 'bottom',
             labels: {
-              boxWidth: 14, // smaller color box
-              padding: 20, // spacing between labels
-              usePointStyle: true, // makes it look cleaner
+              boxWidth: 14,
+              padding: 20, 
+              usePointStyle: true, 
             },
-            align: 'center', // force them to be in one row
+            align: 'center', 
           },
           title: {
             display: true,

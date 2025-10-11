@@ -39,7 +39,7 @@ export class UsersComponent implements OnInit {
         allUsers.forEach((user, index) => {
           setTimeout(() => {
             this.users.push(user);
-          }, index * 200); // 100ms between each row, adjust as needed
+          }, index * 200); 
         });
       },
       error: (err) => {

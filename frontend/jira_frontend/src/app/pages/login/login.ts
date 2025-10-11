@@ -7,7 +7,7 @@ import { UserService } from '../../services/user-service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule], // LucideAngularModule removed
+  imports: [CommonModule, FormsModule], 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './login.html',
   styleUrl: './login.css',

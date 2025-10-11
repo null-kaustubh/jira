@@ -1,9 +1,9 @@
 .dashboard-container {
   padding: 20px;
-  background-color: #1a202c; /* dark dashboard background */
+  background-color: #1a202c; 
   min-height: 80vh;
   border-radius: 1rem;
-  color: #e2e8f0; /* neutral text color */
+  color: #e2e8f0; 
   font-family: 'Segoe UI', sans-serif;
 }
 
@@ -11,7 +11,7 @@
   margin-bottom: 30px;
   text-align: center;
   padding: 20px;
-  background-color: #2d3748; /* slightly lighter dark box */
+  background-color: #2d3748; 
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   user-select: none;
@@ -20,7 +20,7 @@
     font-size: 28px;
     font-weight: 700;
     color: white;
-    background: linear-gradient(90deg, #38bdf8, #818cf8); /* gradient like iTask */
+    background: linear-gradient(90deg, #38bdf8, #818cf8); 
     -webkit-background-clip: text;
     margin-bottom: 5px;
     animation: fadeInDown 1s ease-out;
@@ -32,7 +32,7 @@
 
   p {
     font-size: 16px;
-    color: #a0aec0; /* neutral secondary text */
+    color: #a0aec0; 
   }
 }
 
@@ -45,8 +45,8 @@
 .project-card {
   padding: 20px;
   border-radius: 0.75rem;
-  background-color: #2d3748; /* dark card bg */
-  border: 1px solid #4a5568; /* subtle border */
+  background-color: #2d3748; 
+  border: 1px solid #4a5568;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   color: #edf2f7;
   transform: translateY(20px);
@@ -59,7 +59,7 @@
     margin-bottom: 8px;
     font-size: 18px;
     font-weight: 600;
-    color: #38bdf8; /* accent gradient color */
+    color: #38bdf8; 
   }
 
   p {
@@ -77,19 +77,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 200px; /* adjust as needed */
+  min-height: 200px; 
 }
 
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #2d3748; /* dark background part */
-  border-top: 5px solid #38bdf8; /* accent color like iTask */
+  border: 5px solid #2d3748; 
+  border-top: 5px solid #38bdf8; 
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-/* Spin animation */
 @keyframes spin {
   0% {
     transform: rotate(0deg);

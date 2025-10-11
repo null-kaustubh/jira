@@ -16,7 +16,6 @@ interface DecodedToken {
 export class JwtService {
   constructor() {}
 
-  // ✅ Added
   getToken(): string | null {
     return localStorage.getItem('token');
   }
