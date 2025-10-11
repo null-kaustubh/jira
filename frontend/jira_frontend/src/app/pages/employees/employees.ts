@@ -36,9 +36,15 @@ export class Employees implements OnInit {
     this.isLoading = true;
     this.projectService.getProjectById(this.projectId).subscribe({
       next: (projectData) => {
-        this.employees = projectData.employees || [];
+        const allEmployees = projectData.employees || [];
+        this.employees = []; 
         this.projectName = projectData.name;
         this.isLoading = false;
+        allEmployees.forEach((emp, index) => {
+          setTimeout(() => {
+            this.employees.push(emp);
+          }, index * 100); 
+        });
       },
       error: (err) => {
         console.error('Error fetching project employees:', err);
@@ -46,6 +52,7 @@ export class Employees implements OnInit {
       },
     });
   }
+  
 
   addEmployee(): void {
     console.log('Add Employee clicked');

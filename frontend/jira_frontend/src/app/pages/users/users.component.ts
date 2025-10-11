@@ -31,8 +31,16 @@ export class UsersComponent implements OnInit {
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (data) => {
-        this.users = data.users.length ? data.users : [];
+        const allUsers = data.users.length ? data.users : [];
+        this.users = []; 
         this.isLoading = false;
+  
+        // staggered display
+        allUsers.forEach((user, index) => {
+          setTimeout(() => {
+            this.users.push(user);
+          }, index * 200); // 100ms between each row, adjust as needed
+        });
       },
       error: (err) => {
         console.error('Failed to load users', err);
@@ -40,6 +48,7 @@ export class UsersComponent implements OnInit {
       },
     });
   }
+  
 
   createNewUser(): void {
     this.router.navigate(['/users/register']);
