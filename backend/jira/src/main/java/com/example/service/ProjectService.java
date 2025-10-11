@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -118,6 +119,31 @@ class ProjectServiceImpl implements ProjectService {
 
             if (request.get("status") != null)
                 existingProject.setStatus((String) request.get("status"));
+            
+System.out.println(request.get("employeeIds") );
+            if (request.get("employeeIds") != null) {
+            	Object idsObj = request.get("employeeIds");
+            	Set<User> emps = new HashSet<>();
+
+            	if (idsObj instanceof List<?>) {  // ✅ safely check for List
+            	    List<?> rawList = (List<?>) idsObj;
+            	    for (Object idObj : rawList) {
+            	        Long i = null;
+            	        if (idObj instanceof Integer) {
+            	            i = ((Integer) idObj).longValue();  // ✅ safe Integer → Long
+            	        } else if (idObj instanceof Long) {
+            	            i = (Long) idObj;
+            	        } else if (idObj instanceof String) {
+            	            i = Long.parseLong((String) idObj);  // ✅ String → Long
+            	        }
+
+            	        if (i != null) {
+            	            userRepository.findById(i).ifPresent(emps::add);
+            	        }
+            	    }
+            	    existingProject.setEmployees(emps);
+            	}
+            }
         } else {
             throw new RuntimeException("Access Denied: Only Admin or Manager can update projects");
         }

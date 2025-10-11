@@ -5,12 +5,12 @@
           Project Members: <span class="text-sky-400">{{ projectName }}</span>
         </h1>
         <div *ngIf="role?.toUpperCase() === 'ADMIN' || role?.toUpperCase() === 'MANAGER'">
-          <button
+          <!-- <button
           (click)="addEmployee()"
           class="bg-sky-500 font-semibold text-white px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-sky-600 transition-colors"
         >
           Add Employee
-        </button>
+        </button> -->
         </div>
       </div>
   
@@ -22,9 +22,6 @@
                 <th scope="col" class="px-6 py-3">Username</th>
                 <th scope="col" class="px-6 py-3">Email</th>
                 <th scope="col" class="px-6 py-3">Role</th>
-                <th *ngIf="role?.toUpperCase() === 'ADMIN' || role?.toUpperCase() === 'MANAGER'" scope="col" class="px-6 py-3">
-                  <span class="sr-only">Actions</span>
-                </th>
               </tr>
             </thead>
             <tbody *ngIf="!isLoading">
@@ -35,14 +32,7 @@
                 <td class="px-6 py-4 font-medium whitespace-nowrap">{{ employee.username }}</td>
                 <td class="px-6 py-4 text-neutral-300">{{ employee.email }}</td>
                 <td class="px-6 py-4 text-neutral-300 capitalize">{{ employee.role | lowercase }}</td>
-                <td *ngIf="role?.toUpperCase() === 'ADMIN' || role?.toUpperCase() === 'MANAGER'" class="px-6 py-4 text-right">
-                  <button
-                    (click)="removeEmployee(employee.user_id)"
-                    class="font-medium text-red-500 hover:text-red-400 transition-colors"
-                  >
-                    Remove
-                  </button>
-                </td>
+                
               </tr>
               <tr *ngIf="employees.length === 0">
                 <td colspan="4" class="text-center py-10 text-neutral-500">

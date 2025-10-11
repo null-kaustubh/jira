@@ -58,18 +58,4 @@ export class Employees implements OnInit {
     console.log('Add Employee clicked');
     alert('Add employee functionality is not yet implemented.');
   }
-
-  removeEmployee(userId: number): void {
-    // if (confirm('Are you sure you want to remove this employee from the project?')) {
-    //   this.projectService.removeEmployeeFromProject(this.projectId, userId).subscribe({
-    //     next: () => {
-    //       this.employees = this.employees.filter((emp) => emp.user_id !== userId);
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Failed to remove employee:', err.message);
-    //       alert('Could not remove employee. Please try again.');
-    //     },
-    //   });
-    // }
-  }
 }
