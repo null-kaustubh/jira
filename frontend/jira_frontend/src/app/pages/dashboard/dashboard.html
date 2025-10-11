@@ -39,7 +39,7 @@
 
       <div *ngIf="userRole?.toUpperCase() === 'MANAGER'">
         <button
-          class="flex items-center ml-3 gap-2 px-4 py-2 text-sm font-semibold bg-sky-600 text-white rounded-lg hover:bg-sky-500 transform hover:-translate-y-0.5 transition-all duration-200 shadow-md hover:shadow-sky-500/30"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-sky-600 text-white rounded-lg hover:bg-sky-500 transform hover:-translate-y-0.5 transition-all duration-200 shadow-md hover:shadow-sky-500/30"
           (click)="openCreateProjectModal()"
         >
           <svg
@@ -278,7 +278,18 @@
             ></lucide-icon>
           </button>
           <div *ngIf="projectsExpanded" class="pl-6 mt-2 space-y-1 overflow-y-auto overflow-x-hidden max-h-[400px] w-full sidebar-scroll">
-            <ng-container *ngIf="projects.length > 0; else noProjects">
+            <div *ngIf="isLoading" class="casual-loader-3d">
+              <div id="load">
+                <div>G</div>
+                <div>N</div>
+                <div>I</div>
+                <div>D</div>
+                <div>A</div>
+                <div>O</div>
+                <div>L</div>
+              </div>
+            </div> 
+            <ng-container *ngIf="!isLoading && projects.length > 0;">
               <div
                 *ngFor="let project of projects"
                 class="group relative flex items-center justify-between rounded-md px-3 text-sm transition-colors cursor-pointer h-10"
@@ -304,7 +315,7 @@
                 <div class="flex items-center gap-2 relative h-full">
                   <span class="truncate">{{ project.name }}</span>
                 </div>
- 
+                
                 <!-- Dropdown -->
 <div 
 class="relative z-20" 
@@ -341,11 +352,13 @@ class="relative z-20"
 </button>
 </div>
               </div>
+              <div *ngIf="!isLoading && projects.length === 0" class="text-neutral-400 text-sm py-2">
+                No projects available.
+              </div>
             </ng-container>
  
-            <ng-template #noProjects>
-              <div class="text-sm text-neutral-400 pl-1">No projects yet.</div>
-            </ng-template>
+                     
+            
           </div>
         </div>
       </nav>

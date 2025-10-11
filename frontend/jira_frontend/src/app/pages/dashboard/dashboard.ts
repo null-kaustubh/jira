@@ -102,7 +102,7 @@ export class MainLayoutComponent {
     });
 
     // Load projects
-    this.getAllProjects();
+    this.loadProjects();
   }
 
   // Toggle User Menu
@@ -146,12 +146,17 @@ export class MainLayoutComponent {
     }
   }
 
-  getAllProjects() {
+  loadProjects() {
+    this.isLoading = true;
     this.projectService.getAllProjects().subscribe({
       next: (data) => {
-        this.projects = Array.isArray(data) && data.length ? data : [];
+        this.projects = data;
         this.isLoading = false;
       },
+      error: () => {
+        this.projects = [];
+        this.isLoading = false;
+      }
     });
   }
 
@@ -201,7 +206,7 @@ export class MainLayoutComponent {
 
     this.projectService.createProject(payload).subscribe({
       next: () => {
-        this.getAllProjects();
+        this.loadProjects();
         this.closeCreateProjectModal();
       },
       error: (err) => {
@@ -236,7 +241,7 @@ export class MainLayoutComponent {
 
     this.projectService.updateProject(payload, this.editingProject.projectId).subscribe({
       next: () => {
-        this.getAllProjects();
+        this.loadProjects();
         this.closeEditProjectModal();
       },
       error: () => alert('Failed to update project'),

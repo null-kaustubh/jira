@@ -6,6 +6,7 @@ export interface Project {
 }
 
 export interface ProjectFull {
+  tasks: any;
   projectId: number;
   name: string;
   description?: string;
