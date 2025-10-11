@@ -16,6 +16,7 @@ export interface Task {
   type: TaskType;
   priority: TaskPriority;
   assignee: TaskAssignee;
+  dueDate: Date | undefined;
 }
 
 export interface CreateTaskPayload {

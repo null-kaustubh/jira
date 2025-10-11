@@ -9,29 +9,36 @@ export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
-    // ✅ Check if the token is valid
-    if (!this.jwtService.isTokenValid()) {
+    const tokenValid = this.jwtService.isTokenValid();
+    const url = state.url;
+    const role = this.jwtService.getUserRole();
+  
+    // ✅ 1) Allow unauthenticated users to access /login
+    if (url === '/login' && !tokenValid) {
+      return true;
+    }
+  
+    // ✅ 2) Prevent logged-in users from visiting /login
+    if (url === '/login' && tokenValid) {
+      return this.router.createUrlTree(['/']);
+    }
+  
+    // ✅ 3) If not authenticated, block all other routes
+    if (!tokenValid) {
       return this.router.createUrlTree(['/login']);
     }
-
-    const role = this.jwtService.getUserRole(); // e.g., 'admin', 'user', etc.
-    const url = state.url; // current route path
-
+  
+    // ✅ 4) Role-based access
     if (url.startsWith('/users') && role !== 'ADMIN') {
       return this.router.createUrlTree(['/']);
     }
-
+  
     if (url.startsWith('/register') && role !== 'ADMIN') {
-      // only admin can access register
       return this.router.createUrlTree(['/']);
     }
-
-    if (url.startsWith('/projects')) {
-      // projects route is open to all roles (user, admin, etc.)
-      return true;
-    }
-
-    // default → allow for authenticated users
+  
+    // ✅ 5) Allow projects for all roles
     return true;
   }
+  
 }
