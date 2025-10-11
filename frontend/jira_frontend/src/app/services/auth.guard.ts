@@ -13,22 +13,18 @@ export class AuthGuard implements CanActivate {
     const url = state.url;
     const role = this.jwtService.getUserRole();
   
-    // ✅ 1) Allow unauthenticated users to access /login
     if (url === '/login' && !tokenValid) {
       return true;
     }
   
-    // ✅ 2) Prevent logged-in users from visiting /login
     if (url === '/login' && tokenValid) {
       return this.router.createUrlTree(['/']);
     }
   
-    // ✅ 3) If not authenticated, block all other routes
     if (!tokenValid) {
       return this.router.createUrlTree(['/login']);
     }
   
-    // ✅ 4) Role-based access
     if (url.startsWith('/users') && role !== 'ADMIN') {
       return this.router.createUrlTree(['/']);
     }
@@ -36,8 +32,6 @@ export class AuthGuard implements CanActivate {
     if (url.startsWith('/register') && role !== 'ADMIN') {
       return this.router.createUrlTree(['/']);
     }
-  
-    // ✅ 5) Allow projects for all roles
     return true;
   }
   

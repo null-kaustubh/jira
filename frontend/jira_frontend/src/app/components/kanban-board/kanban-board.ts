@@ -27,6 +27,7 @@ export class KanbanBoard implements OnInit {
  
   ngOnInit() {
     this.role = this.jwtService.getUserRole();
+    if(this.role?.toLowerCase()==='admin' || this.role?.toLowerCase()==='manager' ) this.isManagerOrAdmin = true;
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
       if (!isNaN(id) && id > 0) {      
@@ -59,7 +60,7 @@ export class KanbanBoard implements OnInit {
 
   showModal: boolean = false;
   selectedTask: Task | null = null;
-  isManagerOrAdmin: boolean = true; 
+  isManagerOrAdmin: boolean = false; 
   
   getTasksByStatus(status: string) {
     return this.tasks.filter((t) => t.status === status);
